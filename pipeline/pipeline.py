@@ -6,10 +6,6 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 
-def conectarBanco():
-    
-    return conn
-
 def criarTabelaReviews(conn, cur):
     create_table_query = """
     CREATE TABLE IF NOT EXISTS reviews (
@@ -33,41 +29,58 @@ def criarTabelaReviews(conn, cur):
     conn.commit()
     return True
 
-env_path = 'for-devs-pln/.env'
-load_dotenv()
+def removerNulos(df):
+    df['product_name'] = df['product_name'].fillna('Não informado')
+    df['product_brand'] = df['product_brand'].fillna('Não informado')
+    df['site_category_lv1'] = df['site_category_lv1'].fillna('Não informado')
+    df['site_category_lv2'] = df['site_category_lv2'].fillna('Não informado')
+    df['review_title'] = df['review_title'].fillna('Não informado')
+    df['recommend_to_a_friend'] = df['recommend_to_a_friend'].fillna('N/A')
+    df['review_text'] = df['review_text'].fillna('Não informado')
+    df['reviewer_birth_year'] = df['reviewer_birth_year'].fillna(0)
+    df['reviewer_gender'] = df['reviewer_gender'].fillna('0')
+    df['reviewer_state'] = df['reviewer_state'].fillna('Não informado')
 
-up.uses_netloc.append("postgres")
-url = up.urlparse(os.getenv('DB_URL'))
+    print('Limpeza realizada')
+    return df
 
-csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
-df = pd.read_csv(csv_url, sep=',')
-df = df.drop_duplicates()
-print(df.isnull().sum())
-#df = removerNulos(df)
-try:
-    conn = psycopg2.connect(
-        database=url.path[1:],
-        password = url.password,
-        user=url.username,
-        host=url.hostname,
-        port=url.port
-    )
+def executarPipeline():
+    env_path = 'for-devs-pln/.env'
+    load_dotenv()
 
-    engine = create_engine('postgresql://' + url.netloc)
+    up.uses_netloc.append("postgres")
+    url = up.urlparse(os.getenv('DB_URL'))
 
-    print("Conectou")
+    csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
+    df = pd.read_csv(csv_url, sep=',')
+    df = df.drop_duplicates()
+    print(df.isnull().sum())
+    df = removerNulos(df)
+    print(df.isnull().sum())
+    try:
+        conn = psycopg2.connect(
+            database=url.path[1:],
+            password = url.password,
+            user=url.username,
+            host=url.hostname,
+            port=url.port
+        )
 
-    cur = conn.cursor()
+        print("Conectou")
 
-    criarTabelaReviews(conn=conn, cur=cur)
-    df.to_sql('reviews', engine, if_exists='replace', index=False)
+        cur = conn.cursor()
 
-    cur.execute("SELECT COUNT(*) FROM reviews")
-    count = cur.fetchone()[0]
-    print(f"Total de registros na tabela 'reviews': {count}")
+        #criarTabelaReviews(conn=conn, cur=cur)
 
-    conn.close()
+        #cur.execute("DELETE FROM reviews")
+        engine = create_engine('postgresql://' + url.netloc)
+        df.to_sql('reviews', engine, if_exists='replace', index=False)
 
-except psycopg2.Error as e:
-    print(f"Erro ao conectar ao banco de dados: {e}")
+        cur.execute("SELECT COUNT(*) FROM reviews")
+        count = cur.fetchone()[0]
+        print(f"Total de registros na tabela 'reviews': {count}")
 
+        conn.close()
+
+    except psycopg2.Error as e:
+        print(f"Erro ao conectar ao banco de dados: {e}")
