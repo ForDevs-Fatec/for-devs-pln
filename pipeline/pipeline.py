@@ -6,10 +6,6 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 
-def conectarBanco():
-    
-    return conn
-
 def criarTabelaReviews(conn, cur):
     create_table_query = """
     CREATE TABLE IF NOT EXISTS reviews (
@@ -33,41 +29,46 @@ def criarTabelaReviews(conn, cur):
     conn.commit()
     return True
 
-env_path = 'for-devs-pln/.env'
-load_dotenv()
+def removerNulos(df):
+    
+    return df
 
-up.uses_netloc.append("postgres")
-url = up.urlparse(os.getenv('DB_URL'))
+def executarPipeline():
+    env_path = 'for-devs-pln/.env'
+    load_dotenv()
 
-csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
-df = pd.read_csv(csv_url, sep=',')
-df = df.drop_duplicates()
-print(df.isnull().sum())
-#df = removerNulos(df)
-try:
-    conn = psycopg2.connect(
-        database=url.path[1:],
-        password = url.password,
-        user=url.username,
-        host=url.hostname,
-        port=url.port
-    )
+    up.uses_netloc.append("postgres")
+    url = up.urlparse(os.getenv('DB_URL'))
 
-    engine = create_engine('postgresql://' + url.netloc)
+    csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
+    df = pd.read_csv(csv_url, sep=',')
+    df = df.drop_duplicates()
+    print(df.isnull().sum())
+    #df = removerNulos(df)
+    try:
+        conn = psycopg2.connect(
+            database=url.path[1:],
+            password = url.password,
+            user=url.username,
+            host=url.hostname,
+            port=url.port
+        )
 
-    print("Conectou")
+        print("Conectou")
 
-    cur = conn.cursor()
+        cur = conn.cursor()
 
-    criarTabelaReviews(conn=conn, cur=cur)
-    df.to_sql('reviews', engine, if_exists='replace', index=False)
+        #criarTabelaReviews(conn=conn, cur=cur)
 
-    cur.execute("SELECT COUNT(*) FROM reviews")
-    count = cur.fetchone()[0]
-    print(f"Total de registros na tabela 'reviews': {count}")
+        #cur.execute("DELETE FROM reviews")
+        engine = create_engine('postgresql://' + url.netloc)
+        df.to_sql('reviews', engine, if_exists='replace', index=False)
 
-    conn.close()
+        cur.execute("SELECT COUNT(*) FROM reviews")
+        count = cur.fetchone()[0]
+        print(f"Total de registros na tabela 'reviews': {count}")
 
-except psycopg2.Error as e:
-    print(f"Erro ao conectar ao banco de dados: {e}")
+        conn.close()
 
+    except psycopg2.Error as e:
+        print(f"Erro ao conectar ao banco de dados: {e}")
