@@ -30,7 +30,18 @@ def criarTabelaReviews(conn, cur):
     return True
 
 def removerNulos(df):
-    
+    df['product_name'] = df['product_name'].fillna('Não informado')
+    df['product_brand'] = df['product_brand'].fillna('Não informado')
+    df['site_category_lv1'] = df['site_category_lv1'].fillna('Não informado')
+    df['site_category_lv2'] = df['site_category_lv2'].fillna('Não informado')
+    df['review_title'] = df['review_title'].fillna('Não informado')
+    df['recommend_to_a_friend'] = df['recommend_to_a_friend'].fillna('N/A')
+    df['review_text'] = df['review_text'].fillna('Não informado')
+    df['reviewer_birth_year'] = df['reviewer_birth_year'].fillna(0)
+    df['reviewer_gender'] = df['reviewer_gender'].fillna('0')
+    df['reviewer_state'] = df['reviewer_state'].fillna('Não informado')
+
+    print('Limpeza realizada')
     return df
 
 def executarPipeline():
@@ -44,7 +55,8 @@ def executarPipeline():
     df = pd.read_csv(csv_url, sep=',')
     df = df.drop_duplicates()
     print(df.isnull().sum())
-    #df = removerNulos(df)
+    df = removerNulos(df)
+    print(df.isnull().sum())
     try:
         conn = psycopg2.connect(
             database=url.path[1:],
