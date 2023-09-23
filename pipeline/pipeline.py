@@ -44,13 +44,7 @@ def removerNulos(df):
     print('Limpeza realizada')
     return df
 
-def executarPipeline():
-    env_path = 'for-devs-pln/.env'
-    load_dotenv()
-
-    up.uses_netloc.append("postgres")
-    url = up.urlparse(os.getenv('DB_URL'))
-
+def executarPipeline(conn, cur, url):
     csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
     df = pd.read_csv(csv_url, sep=',')
     df = df.drop_duplicates()
@@ -58,28 +52,12 @@ def executarPipeline():
     df = removerNulos(df)
     print(df.isnull().sum())
     try:
-        conn = psycopg2.connect(
-            database=url.path[1:],
-            password = url.password,
-            user=url.username,
-            host=url.hostname,
-            port=url.port
-        )
-
-        print("Conectou")
-
-        cur = conn.cursor()
-
-        #criarTabelaReviews(conn=conn, cur=cur)
-
-        #cur.execute("DELETE FROM reviews")
         engine = create_engine('postgresql://' + url.netloc)
         df.to_sql('reviews', engine, if_exists='replace', index=False)
 
         cur.execute("SELECT COUNT(*) FROM reviews")
         count = cur.fetchone()[0]
         print(f"Total de registros na tabela 'reviews': {count}")
-
         conn.close()
 
     except psycopg2.Error as e:
