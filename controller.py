@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 import psycopg2
 from pipeline import pipeline
-from funcoes import pesquisa
+from funcoes import pesquisa, analises
 from dotenv import load_dotenv
 import os
 import urllib.parse as up
@@ -38,6 +38,12 @@ def pesquisar(parametro_de_pesquisa: str):
     except:
         {"erro": "erro ao executar busca"} 
 
+@app.get("/analise/{dia}")
+def analisarPorDia(dia):
+    try:
+        return(analises.analisarPorDia(dia=dia, tipo='a', conn=conn, cur=cur))
+    except:
+        {"erro": "erro ao executar análise"} 
 
 @app.put("/pipeline")
 def executarPipeline():
