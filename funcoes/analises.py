@@ -71,8 +71,11 @@ def analisar(valor, tipo, analise, cur):
             overallTotal += row['overall_rating']
         
         media = overallTotal / totalRows
+        valorRes = valor
+        if analise == 'idade':
+            valorRes = 2023 - int(valor)
         res = {
-            analise: valor,
+            analise: valorRes,
             tipo: resultado,
             'avaliação_média': round(media, 2)
         }

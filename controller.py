@@ -66,6 +66,13 @@ def analisarPorGenero(genero, tipo):
     except:
         {"erro": "erro ao executar análise"}
 
+@app.get("/analise/por-idade/{anoNascimento}/{tipo}")
+def analisarPorIdade(anoNascimento, tipo):
+    try:
+        return(analises.analisar(valor=anoNascimento, tipo=tipo, analise='idade', cur=cur))
+    except:
+        {"erro": "erro ao executar análise"}
+
 @app.put("/pipeline")
 def executarPipeline():
     try:
