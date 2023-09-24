@@ -38,12 +38,25 @@ def pesquisar(parametro_de_pesquisa: str):
     except:
         {"erro": "erro ao executar busca"} 
 
-@app.get("/analise/{dia}")
-def analisarPorDia(dia):
+@app.get("/analise/classificacao-produtos")
+def analisarClassificacaoProdutos():
     try:
-        return(analises.analisarPorDia(dia=dia, tipo='a', conn=conn, cur=cur))
+        return(analises.analisarPorDataGeral(conn=conn, cur=cur))
+    except:
+        {"erro": "erro ao executar análise"}
+
+@app.get("/analise/por-dia/{dia}/{tipo}")
+def analisarPorDia(dia, tipo):
+    try:
+        if tipo == 'marca':
+            return(analises.analisarPorDiaMarca(dia=dia, conn=conn, cur=cur))
+        if tipo == 'produto':
+            return(analises.analisarPorDiaProduto(dia=dia, conn=conn, cur=cur))
+        if tipo == 'categoria':
+            return(analises.analisarPorDiaCategoria(dia=dia, conn=conn, cur=cur))
     except:
         {"erro": "erro ao executar análise"} 
+
 
 @app.put("/pipeline")
 def executarPipeline():

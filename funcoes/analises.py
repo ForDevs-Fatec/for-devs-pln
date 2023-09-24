@@ -1,5 +1,11 @@
-def analisarPorDia(dia, tipo, conn, cur):
-    query = "SELECT * FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND product_brand != 'Não informado'"
+def appendItem(newRow, lista, campo):
+    if newRow[campo] in lista:
+            lista[newRow[campo]].append(newRow)
+    else:
+        lista[newRow[campo]] = [newRow]
+
+def analisarPorDiaMarca(dia, conn, cur):
+    query = "SELECT submission_date, product_brand, overall_rating FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND product_brand != 'Não informado'"
     cur.execute(query)
     result = cur.fetchall()
 
@@ -7,34 +13,133 @@ def analisarPorDia(dia, tipo, conn, cur):
     for row in result:
         newRow = {
             'submission_date': row[0],
-            'product_brand': row[4],
-            'overall_rating': row[8]
+            'product_brand': row[1],
+            'overall_rating': row[2]
         }
         
-        if newRow['product_brand'] in resultados_por_marca:
-            resultados_por_marca[newRow['product_brand']].append(newRow)
-        else:
-            resultados_por_marca[newRow['product_brand']] = [newRow]
+        appendItem(newRow=newRow, lista=resultados_por_marca, campo='product_brand')
 
     classificacao = []
     for resultado in resultados_por_marca:
         overallTotal = 0
         totalRows = 0
-        submission_date = ''
-        product_brand = ''
         for row in resultados_por_marca[resultado]:
             totalRows += 1
             overallTotal += row['overall_rating']
-            submission_date = dia
-            product_brand = row['product_brand']
         
         media = overallTotal / totalRows
         res = {
-            'dia_analisado': submission_date,
-            'marca': product_brand,
-            'avaliação_média': media
+            'dia_analisado': dia,
+            'marca': resultado,
+            'avaliação_média': round(media, 2)
         }
         classificacao.append(res)
 
+    return classificacao
+
+def analisarPorDiaProduto(dia, conn, cur):
+    query = "SELECT submission_date, product_name, overall_rating FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND product_name != 'Não informado'"
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultados_por_produto = {}
+    for row in result:
+        newRow = {
+            'submission_date': row[0],
+            'product_name': row[1],
+            'overall_rating': row[2]
+        }
+        
+        appendItem(newRow=newRow, lista=resultados_por_produto, campo='product_name')
+    
+    classificacao = []
+    for resultado in resultados_por_produto:
+        overallTotal = 0
+        totalRows = 0
+        for row in resultados_por_produto[resultado]:
+            totalRows += 1
+            overallTotal += row['overall_rating']
+        
+        media = overallTotal / totalRows
+        res = {
+            'dia_analisado': dia,
+            'produto': resultado,
+            'avaliação_média': round(media, 2)
+        }
+        classificacao.append(res)
+
+    return classificacao
+
+def analisarPorDiaCategoria(dia, conn, cur):
+    query = "SELECT submission_date, site_category_lv1, site_category_lv2, overall_rating FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND (site_category_lv1 != 'Não informado' OR site_category_lv2 != 'Não informado')"
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultados_por_categoria = {}
+    for row in result:
+        newRow = {
+            'submission_date': row[0],
+            'site_category_lv1': row[1],
+            'site_category_lv2': row[2],
+            'overall_rating': row[3]
+        }
+        
+        if newRow['site_category_lv1'] != 'Não informado':
+            appendItem(newRow=newRow, lista=resultados_por_categoria, campo='site_category_lv1')
+        if newRow['site_category_lv2'] != 'Não informado':
+            appendItem(newRow=newRow, lista=resultados_por_categoria, campo='site_category_lv2')
+    
+    classificacao = []
+    for resultado in resultados_por_categoria:
+        overallTotal = 0
+        totalRows = 0
+        for row in resultados_por_categoria[resultado]:
+            totalRows += 1
+            overallTotal += row['overall_rating']
+        
+        media = overallTotal / totalRows
+        res = {
+            'dia_analisado': dia,
+            'categoria': resultado,
+            'avaliação_média': round(media, 2)
+        }
+        classificacao.append(res)
+
+    return classificacao
+
+def analisarPorDataGeral(conn, cur):
+    query = "SELECT * FROM reviews WHERE product_name != 'Não informado'"
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultados_por_produto = {}
+    for row in result:
+        newRow = {
+            'submission_date': row[0],
+            'product_name': row[3],
+            'overall_rating': row[8]
+        }
+
+        if newRow['product_name'] in resultados_por_produto:
+            resultados_por_produto[newRow['product_name']].append(newRow)
+        else:
+            resultados_por_produto[newRow['product_name']] = [newRow]
+    
+    classificacao = []
+    for resultado in resultados_por_produto:
+        overallTotal = 0
+        totalRows = 0
+        product_name = ''
+        for row in resultados_por_produto[resultado]:
+            totalRows += 1
+            overallTotal += row['overall_rating']
+            product_name = row['product_name']
+        
+        media = overallTotal / totalRows
+        res = {
+            'produto': product_name,
+            'avaliação_média': media
+        }
+        classificacao.append(res)
 
     return classificacao
