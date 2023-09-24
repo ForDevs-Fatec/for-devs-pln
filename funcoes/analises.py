@@ -114,8 +114,7 @@ def analisarPorDataGeral(conn, cur):
         media = overallTotal / totalRows
         res = {
             'produto': product_name,
-            'avaliação_média': media
+            'avaliação_média': round(media, 2)
         }
         classificacao.append(res)
-
-    return classificacao
+    return sorted(classificacao, key=lambda d: d['avaliação_média'], reverse=True)
