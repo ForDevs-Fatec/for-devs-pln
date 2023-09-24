@@ -4,128 +4,63 @@ def appendItem(newRow, lista, campo):
     else:
         lista[newRow[campo]] = [newRow]
 
-def analisarPorDiaMarca(dia, conn, cur):
-    query = "SELECT submission_date, product_brand, overall_rating FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND product_brand != 'Não informado'"
-    cur.execute(query)
-    result = cur.fetchall()
-
-    resultados_por_marca = {}
-    for row in result:
-        newRow = {
-            'submission_date': row[0],
-            'product_brand': row[1],
-            'overall_rating': row[2]
-        }
-        
-        appendItem(newRow=newRow, lista=resultados_por_marca, campo='product_brand')
-
-    classificacao = []
-    for resultado in resultados_por_marca:
-        overallTotal = 0
-        totalRows = 0
-        for row in resultados_por_marca[resultado]:
-            totalRows += 1
-            overallTotal += row['overall_rating']
-        
-        media = overallTotal / totalRows
-        res = {
-            'dia_analisado': dia,
-            'marca': resultado,
-            'avaliação_média': round(media, 2)
-        }
-        classificacao.append(res)
-
-    return classificacao
-
-def analisarPorDiaProduto(dia, conn, cur):
-    query = "SELECT submission_date, product_name, overall_rating FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND product_name != 'Não informado'"
-    cur.execute(query)
-    result = cur.fetchall()
-
-    resultados_por_produto = {}
-    for row in result:
-        newRow = {
-            'submission_date': row[0],
-            'product_name': row[1],
-            'overall_rating': row[2]
-        }
-        
-        appendItem(newRow=newRow, lista=resultados_por_produto, campo='product_name')
-    
-    classificacao = []
-    for resultado in resultados_por_produto:
-        overallTotal = 0
-        totalRows = 0
-        for row in resultados_por_produto[resultado]:
-            totalRows += 1
-            overallTotal += row['overall_rating']
-        
-        media = overallTotal / totalRows
-        res = {
-            'dia_analisado': dia,
-            'produto': resultado,
-            'avaliação_média': round(media, 2)
-        }
-        classificacao.append(res)
-
-    return classificacao
-
-def analisarPorDiaCategoria(dia, conn, cur):
-    query = "SELECT submission_date, site_category_lv1, site_category_lv2, overall_rating FROM reviews WHERE submission_date LIKE '%" + dia + "%' AND (site_category_lv1 != 'Não informado' OR site_category_lv2 != 'Não informado')"
-    cur.execute(query)
-    result = cur.fetchall()
-
-    resultados_por_categoria = {}
-    for row in result:
-        newRow = {
-            'submission_date': row[0],
-            'site_category_lv1': row[1],
-            'site_category_lv2': row[2],
-            'overall_rating': row[3]
-        }
-        
-        if newRow['site_category_lv1'] != 'Não informado':
-            appendItem(newRow=newRow, lista=resultados_por_categoria, campo='site_category_lv1')
-        if newRow['site_category_lv2'] != 'Não informado':
-            appendItem(newRow=newRow, lista=resultados_por_categoria, campo='site_category_lv2')
-    
-    classificacao = []
-    for resultado in resultados_por_categoria:
-        overallTotal = 0
-        totalRows = 0
-        for row in resultados_por_categoria[resultado]:
-            totalRows += 1
-            overallTotal += row['overall_rating']
-        
-        media = overallTotal / totalRows
-        res = {
-            'dia_analisado': dia,
-            'categoria': resultado,
-            'avaliação_média': round(media, 2)
-        }
-        classificacao.append(res)
-
-    return classificacao
-
-def analisarPorEstadoMarcaProduto(estado, tipo, cur):
+def analisar(valor, tipo, analise, cur):
     campo = ''
-    if(tipo == 'marca'):
+    campoCategoria2 = ''
+    campoAnalise = ''
+    valorQuery = valor
+    operadorIgualdade = 'LIKE'
+
+    if tipo == 'marca':
         campo = 'product_brand'
-    else:
+    elif tipo == 'produto':
         campo = 'product_name'
-    query = "SELECT reviewer_state, " + campo + ", overall_rating FROM reviews WHERE reviewer_state LIKE '" + estado + "' AND " + campo + " != 'Não informado'"
+    elif tipo == 'categoria':
+        campo = 'site_category_lv1'
+        campoCategoria2 = 'site_category_lv2'
+
+
+    if analise == 'genero':
+        campoAnalise = 'reviewer_gender'
+    elif analise == 'estado':
+        campoAnalise = 'reviewer_state'
+    elif analise == 'dia':
+        campoAnalise = 'submission_date'
+        valorQuery = '%' + valor + '%'
+    elif analise == 'idade':
+        campoAnalise = 'reviewer_birth_year'
+        operadorIgualdade = '='
+    
+    query = "SELECT " + campoAnalise + ", " + campo + ", overall_rating FROM reviews WHERE " + campoAnalise + " " + operadorIgualdade + " '" + valorQuery + "' AND " + campo + " != 'Não informado'"
+    if tipo == 'categoria':
+        query = "SELECT " + campoAnalise + ", " + campo + ", " + campoCategoria2 + ", overall_rating FROM reviews WHERE " + campoAnalise + " " + operadorIgualdade + " '" + valorQuery + "' AND (" + campo + " != 'Não informado' OR " + campoCategoria2 + " != 'Não informado')"
+
     cur.execute(query)
     result = cur.fetchall()
 
     resultados = {}
-    for row in result:
-        newRow = {
-            'submission_date': row[0],
-            campo: row[1],
-            'overall_rating': row[2]
-        }
-        
-        appendItem(newRow=newRow, lista=resultados, campo=campo)
+
+    if tipo != 'categoria':
+        for row in result:
+            newRow = {
+                campoAnalise: row[0],
+                campo: row[1],
+                'overall_rating': row[2]
+            }
+            
+            appendItem(newRow=newRow, lista=resultados, campo=campo)
+    else:
+        for row in result:
+            newRow = {
+                campoAnalise: row[0],
+                campo: row[1],
+                campoCategoria2: row[2],
+                'overall_rating': row[3]
+            }
+            if newRow[campo] != 'Não informado':
+                appendItem(newRow=newRow, lista=resultados, campo=campo)
+            if newRow[campoCategoria2] != 'Não informado':
+                appendItem(newRow=newRow, lista=resultados, campo=campoCategoria2)
     
     classificacao = []
     for resultado in resultados:
@@ -137,45 +72,8 @@ def analisarPorEstadoMarcaProduto(estado, tipo, cur):
         
         media = overallTotal / totalRows
         res = {
-            'estado': estado,
+            analise: valor,
             tipo: resultado,
-            'avaliação_média': round(media, 2)
-        }
-        classificacao.append(res)
-
-    return classificacao
-
-def analisarPorEstadoCategoria(estado, cur):
-    query = "SELECT reviewer_state, site_category_lv1, site_category_lv2, overall_rating FROM reviews WHERE reviewer_state LIKE '" + estado + "' AND (site_category_lv1 != 'Não informado' OR site_category_lv2 != 'Não informado')"
-    cur.execute(query)
-    result = cur.fetchall()
-
-    resultados = {}
-    for row in result:
-        newRow = {
-            'submission_date': row[0],
-            'site_category_lv1': row[1],
-            'site_category_lv2': row[2],
-            'overall_rating': row[3]
-        }
-        
-        if newRow['site_category_lv1'] != 'Não informado':
-            appendItem(newRow=newRow, lista=resultados, campo='site_category_lv1')
-        if newRow['site_category_lv2'] != 'Não informado':
-            appendItem(newRow=newRow, lista=resultados, campo='site_category_lv2')
-    
-    classificacao = []
-    for resultado in resultados:
-        overallTotal = 0
-        totalRows = 0
-        for row in resultados[resultado]:
-            totalRows += 1
-            overallTotal += row['overall_rating']
-        
-        media = overallTotal / totalRows
-        res = {
-            'estado': estado,
-            'categoria': resultado,
             'avaliação_média': round(media, 2)
         }
         classificacao.append(res)

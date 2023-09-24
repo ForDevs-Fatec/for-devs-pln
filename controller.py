@@ -48,22 +48,21 @@ def analisarClassificacaoProdutos():
 @app.get("/analise/por-dia/{dia}/{tipo}")
 def analisarPorDia(dia, tipo):
     try:
-        if tipo == 'marca':
-            return(analises.analisarPorDiaMarca(dia=dia, conn=conn, cur=cur))
-        if tipo == 'produto':
-            return(analises.analisarPorDiaProduto(dia=dia, conn=conn, cur=cur))
-        if tipo == 'categoria':
-            return(analises.analisarPorDiaCategoria(dia=dia, conn=conn, cur=cur))
+        return(analises.analisar(valor=dia, tipo=tipo, analise='dia', cur=cur))
     except:
         {"erro": "erro ao executar análise"} 
 
 @app.get("/analise/por-estado/{estado}/{tipo}")
 def analisarPorEstado(estado, tipo):
     try:
-        if tipo == 'marca' or tipo == 'produto':
-            return(analises.analisarPorEstadoMarcaProduto(estado=estado, tipo=tipo, cur=cur))
-        else:
-            return(analises.analisarPorEstadoCategoria(estado=estado, cur=cur))
+        return(analises.analisar(valor=estado, tipo=tipo, analise='estado', cur=cur))
+    except:
+        {"erro": "erro ao executar análise"}
+
+@app.get("/analise/por-genero/{genero}/{tipo}")
+def analisarPorGenero(genero, tipo):
+    try:
+        return(analises.analisar(valor=genero, tipo=tipo, analise='genero', cur=cur))
     except:
         {"erro": "erro ao executar análise"}
 
