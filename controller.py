@@ -57,6 +57,15 @@ def analisarPorDia(dia, tipo):
     except:
         {"erro": "erro ao executar análise"} 
 
+@app.get("/analise/por-estado/{estado}/{tipo}")
+def analisarPorEstado(estado, tipo):
+    try:
+        if tipo == 'marca' or tipo == 'produto':
+            return(analises.analisarPorEstadoMarcaProduto(estado=estado, tipo=tipo, cur=cur))
+        else:
+            return(analises.analisarPorEstadoCategoria(estado=estado, cur=cur))
+    except:
+        {"erro": "erro ao executar análise"}
 
 @app.put("/pipeline")
 def executarPipeline():
