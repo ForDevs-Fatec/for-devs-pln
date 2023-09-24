@@ -20,7 +20,7 @@ $ cd for-devs-pln
 $
 
 # Iniciar o projeto
-$ 
+$ uvicorn controller:app --reload
 
 
 ```
