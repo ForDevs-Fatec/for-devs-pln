@@ -17,7 +17,12 @@ $ git clone https://github.com/ForDevs-Fatec/for-devs-pln.git
 $ cd for-devs-pln
 
 # Instale as dependências
-$
+$ pip install psycopg2
+$ pip install python-dotenv
+$ pip install pandas
+$ pip install sqlalchemy
+$ pip install fastapi
+
 
 # Iniciar o projeto
 $ uvicorn controller:app --reload
