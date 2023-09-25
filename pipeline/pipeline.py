@@ -59,6 +59,6 @@ def executarPipeline(conn, cur, url):
         count = cur.fetchone()[0]
         print(f"Total de registros na tabela 'reviews': {count}")
         conn.close()
-
+        engine.dispose()
     except psycopg2.Error as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
