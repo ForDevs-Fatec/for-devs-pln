@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 import urllib.parse as up
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
@@ -25,6 +26,14 @@ conn = psycopg2.connect(
         )
 
 cur = conn.cursor()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def hello_world_root():
