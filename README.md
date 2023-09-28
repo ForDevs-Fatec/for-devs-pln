@@ -25,7 +25,7 @@ $ pip install python-dotenv
 $ pip install pandas
 $ pip install sqlalchemy
 $ pip install fastapi
-
+$ pip install uvicorn
 
 # Iniciar o projeto
 $ uvicorn controller:app --reload
