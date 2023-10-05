@@ -44,6 +44,29 @@ def removerNulos(df):
     print('Limpeza realizada')
     return df
 
+def gerarDocuments(lista):
+    documents = []
+    for item in lista:
+        document = {
+            "submission_date": item[0],
+            "reviewer_id": item[1],
+            "product_id": item[2],
+            "product_name": item[3],
+            "product_brand": item[4],
+            "site_category_lv1": item[5],
+            "site_category_lv2": item[6],
+            "overall_rating": item[7],
+            "recommend_to_a_friend": item[8],
+            "review_title": item[9],
+            "review_text": item[10],
+            "reviewer_birth_year": item[11],
+            "reviewer_gender": item[12],
+            "reviewer_state": item[13]
+        }
+        documents.append(document)
+    return documents
+
+
 def executarPipeline(conn, cur, url, client):
     csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
     df = pd.read_csv(csv_url, sep=',')
@@ -52,7 +75,9 @@ def executarPipeline(conn, cur, url, client):
     df = removerNulos(df)
     print(df.isnull().sum())
     try:
-        client['dados'].insert_many(df.values.tolist())
+        dados = gerarDocuments(df.values.tolist())
+        client['dados'].delete_many(filter= {})
+        client['dados'].insert_many(dados)
         print(f"Total de registros na tabela 'reviews': {client['dados'].count()}")
-    except psycopg2.Error as e:
+    except Exception as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
