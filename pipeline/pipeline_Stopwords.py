@@ -22,7 +22,7 @@ def remover_stopwords(texto):
     palavras_sem_stopwords = [palavra for palavra in palavras if palavra.lower() not in stop_words]
     return ' '.join(palavras_sem_stopwords)
 
-# aplicar a remoção de stop words às colunas de texto
+# aplicar a remoção de stopwords às colunas de texto
 for coluna in colunas_texto:
     df[coluna] = df[coluna].apply(remover_stopwords)
 
