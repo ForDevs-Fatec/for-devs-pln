@@ -1,24 +1,21 @@
-#import do pandinha
 import pandas as pd
+import nltk
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
 
-# tokenização
-def tokenizar(texto):
-    tokens = texto.split()  
-    return tokens
-
-# link do CSV
+# Link para o CSV
 csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
 df = pd.read_csv(csv_url)
 
-# pegar as colunas (trocar se for necessário)
+# Pegar as colunas de texto
 colunas_texto = ['review_title', 'review_text']
 
-# aplicar a tokenização a cada linha das colunas de texto (trocar se for necessário)
+# Aplicar a tokenização a cada linha das colunas de texto
 for coluna_texto in colunas_texto:
-    df[coluna_texto] = df[coluna_texto].apply(tokenizar)
+    df[coluna_texto] = df[coluna_texto].apply(lambda texto: word_tokenize(texto, language='portuguese'))
 
-# acessar os tokens (alterar dependendo do que for necessário)
-linha_tokens = df.loc['review_text', 'review_title']  
+# Acessar os tokens (alterar dependendo do que for necessário)
+linha_tokens = df.loc[0, 'review_text']  
 
-# printar a linha dos tokens
+# Printar a linha dos tokens
 print(linha_tokens)
