@@ -4,7 +4,7 @@ import os
 import urllib.parse as up
 import pandas as pd
 from sqlalchemy import create_engine
-
+from funcoes import preproc
 
 def criarTabelaReviews(conn, cur):
     create_table_query = """
@@ -78,6 +78,11 @@ def executarPipeline(conn, cur, url, client):
         dados = gerarDocuments(df.values.tolist())
         client['dados'].delete_many(filter= {})
         client['dados'].insert_many(dados)
+        preproc.executarPreProcessamento(dados)
+        #token
+        #classificacao
+        #analise
+        #salvar
         print(f"Total de registros na tabela 'reviews': {client['dados'].count()}")
     except Exception as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
