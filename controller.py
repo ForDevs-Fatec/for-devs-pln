@@ -1,14 +1,14 @@
 
 from fastapi import FastAPI
 import psycopg2
-from pipeline import pipeline
+from pipeline import pipeline, conexaoMongo
 from funcoes import pesquisa, analises
 from dotenv import load_dotenv
 import os
 import urllib.parse as up
 import json
 from fastapi.middleware.cors import CORSMiddleware
-
+from pymongo import MongoClient
 
 app = FastAPI()
 
@@ -26,6 +26,8 @@ conn = psycopg2.connect(
         )
 
 cur = conn.cursor()
+
+client = conexaoMongo.conectarMongo()
 
 app.add_middleware(
     CORSMiddleware,
@@ -85,7 +87,7 @@ def analisarPorIdade(anoNascimento, tipo):
 @app.put("/pipeline")
 def executarPipeline():
     try:
-        pipeline.executarPipeline(conn=conn, cur=cur, url=url)
+        pipeline.executarPipeline(conn=conn, cur=cur, url=url, client=client)
         return {"message": "banco atualizado"}
     except:
         return {"erro": "erro ao atualizar banco"}
