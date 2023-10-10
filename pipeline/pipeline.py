@@ -5,6 +5,7 @@ import urllib.parse as up
 import pandas as pd
 from sqlalchemy import create_engine
 from funcoes import preproc
+from pipeline import pipeline_Stopwords
 
 def criarTabelaReviews(conn, cur):
     create_table_query = """
@@ -46,8 +47,11 @@ def removerNulos(df):
 
 def gerarDocuments(lista):
     documents = []
+    i = 1
     for item in lista:
+
         document = {
+            "id": i,
             "submission_date": item[0],
             "reviewer_id": item[1],
             "product_id": item[2],
@@ -64,6 +68,7 @@ def gerarDocuments(lista):
             "reviewer_state": item[13]
         }
         documents.append(document)
+        i += 1
     return documents
 
 
@@ -78,11 +83,14 @@ def executarPipeline(conn, cur, url, client):
         dados = gerarDocuments(df.values.tolist())
         client['dados'].delete_many(filter= {})
         client['dados'].insert_many(dados)
-        preproc.executarPreProcessamento(dados)
+
+        dados_processados = preproc.executarPreProcessamento(dados)
+        #dados_processados = pipeline_Stopwords.
         #token
         #classificacao
         #analise
-        #salvar
+        client['dados_processados'].delete_many(filter={})
+        client['dados_processados'].insert_many(dados_processados)
         print(f"Total de registros na tabela 'reviews': {client['dados'].count()}")
     except Exception as e:
         print(f"Erro ao conectar ao banco de dados: {e}")

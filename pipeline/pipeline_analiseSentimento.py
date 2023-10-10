@@ -10,7 +10,7 @@ colunas_texto = ['review_title', 'review_text']
 
 # Aplicar a análise de sentimentos a cada linha das colunas de texto
 for coluna_texto in colunas_texto:
-    df[coluna_texto + '_sentiment'] = df[coluna_texto].apply(lambda texto: TextBlob(texto).sentiment.polarity)
+    df[coluna_texto + '_sentiment'] = df[coluna_texto].apply(lambda texto: TextBlob(str(texto)).sentiment.polarity)
 
 # Determinar o sentimento com base na polaridade
 def determinar_sentimento(polaridade):

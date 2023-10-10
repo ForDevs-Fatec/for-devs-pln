@@ -12,7 +12,7 @@ colunas_texto = ['review_title', 'review_text']
 
 # Aplicar a tokenização a cada linha das colunas de texto
 for coluna_texto in colunas_texto:
-    df[coluna_texto] = df[coluna_texto].apply(lambda texto: word_tokenize(texto, language='portuguese'))
+    df[coluna_texto] = df[coluna_texto].apply(lambda texto: word_tokenize(str(texto), language='portuguese'))
 
 # Acessar os tokens (alterar dependendo do que for necessário)
 linha_tokens = df.loc[0, 'review_text']  

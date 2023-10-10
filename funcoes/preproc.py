@@ -19,7 +19,9 @@ def executarPreProcessamento(lista):
             "id": i,
             "reviewer_id": item['reviewer_id'],
             "product_id": item["product_id"],
-            "review_text": item['review_text']
+            "review_text": item['review_text'],
+            "review_title": item['review_title'],
+            "overall_rating": item['overall_rating']
         }
         print('passou aqui!')
         documento["review_text"] = remover_caracteres_especiais(documento["review_text"])
@@ -28,4 +30,4 @@ def executarPreProcessamento(lista):
         print('passou aqui!!!')
         documentos.append(documento)
         i += 1
-    print(documentos)
+    return documentos
