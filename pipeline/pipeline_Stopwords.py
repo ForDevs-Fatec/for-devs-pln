@@ -38,4 +38,4 @@ for coluna in colunas_texto:
     df[coluna] = df[coluna].apply(remover_stopwords)
 
 # Exibir o bagulho
-print(df)
+print(df['review_text'])
