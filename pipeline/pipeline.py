@@ -1,11 +1,6 @@
-import psycopg2
-from dotenv import load_dotenv
-import os
-import urllib.parse as up
 import pandas as pd
-from sqlalchemy import create_engine
 from funcoes import preproc
-from pipeline import pipeline_Stopwords
+from pipeline import pipeline_Stopwords, pipeline_Tokenizacao, pipeline_analiseSentimento
 
 def criarTabelaReviews(conn, cur):
     create_table_query = """
@@ -47,11 +42,10 @@ def removerNulos(df):
 
 def gerarDocuments(lista):
     documents = []
-    i = 1
     for item in lista:
 
         document = {
-            "id": i,
+            "index_review": 1,
             "submission_date": item[0],
             "reviewer_id": item[1],
             "product_id": item[2],
@@ -68,7 +62,6 @@ def gerarDocuments(lista):
             "reviewer_state": item[13]
         }
         documents.append(document)
-        i += 1
     return documents
 
 
@@ -85,10 +78,10 @@ def executarPipeline(conn, cur, url, client):
         client['dados'].insert_many(dados)
 
         dados_processados = preproc.executarPreProcessamento(dados)
-        #dados_processados = pipeline_Stopwords.
-        #token
+        dados_processados = pipeline_Stopwords.executar_pipeline(dados_processados)
+        dados_processados = pipeline_Tokenizacao.tokenizar(dados_processados)
         #classificacao
-        #analise
+        dados_processados = pipeline_analiseSentimento.executar_analise_sentimento(dados_processados)
         client['dados_processados'].delete_many(filter={})
         client['dados_processados'].insert_many(dados_processados)
         print(f"Total de registros na tabela 'reviews': {client['dados'].count()}")

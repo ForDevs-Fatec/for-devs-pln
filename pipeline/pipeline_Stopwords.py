@@ -1,4 +1,3 @@
-import pandas as pd
 import nltk
 nltk.download('stopwords')
 
@@ -19,13 +18,13 @@ stop_words_custom = set([
 ])
 
 # Link do CSV
-csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
+# csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
 
 # Lendo o CSV pro df do pandas
-df = pd.read_csv(csv_url)
+# df = pd.read_csv(csv_url)
 
 # Colunas do DataFrame com o texto
-colunas_texto = ['review_title', 'review_text']
+# colunas_texto = ['review_title', 'review_text']
 
 # Função para remover stopwords
 def remover_stopwords(texto):
@@ -33,9 +32,17 @@ def remover_stopwords(texto):
     palavras_sem_stopwords = [palavra for palavra in palavras if palavra.lower() not in stop_words_custom]
     return ' '.join(palavras_sem_stopwords)
 
+def executar_pipeline(dados):
+    dados_processados = []
+    for dado in dados:
+        dado['review_title'] = remover_stopwords(dado['review_title'])
+        dado['review_text'] = remover_stopwords(dado['review_text'])
+        dados_processados.append(dado)
+    return dados_processados
+
 # Aplicar a remoção das stops
-for coluna in colunas_texto:
-    df[coluna] = df[coluna].apply(remover_stopwords)
+# for coluna in colunas_texto:
+#     df[coluna] = df[coluna].apply(remover_stopwords)
 
 # Exibir o bagulho
-print(df['review_text'])
+# print(df['review_text'])
