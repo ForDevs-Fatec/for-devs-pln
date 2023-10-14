@@ -33,8 +33,8 @@ def executar_analise_sentimento(dados):
     for dado in dados:
         polaridade_text = TextBlob(str(dado['review_text'])).sentiment.polarity
         polaridade_title = TextBlob(str(dado['review_title'])).sentiment.polarity
-        dado['sentimento_text'] = determinar_sentimento(polaridade_text)
-        dado['sentimento_title'] = determinar_sentimento(polaridade_title)
+        dado['sentiment_text'] = determinar_sentimento(polaridade_text)
+        dado['sentiment_title'] = determinar_sentimento(polaridade_title)
 
         dados_processados.append(dado)
     return dados_processados

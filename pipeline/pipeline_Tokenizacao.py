@@ -22,7 +22,7 @@ nltk.download('punkt')
 def tokenizar(dados):
     dados_processados = []
     for dado in dados:
-        dado['review_title_tokenized'] = word_tokenize(str(dado['review_title']), language='portuguese')
-        dado['review_text_tokenized'] = word_tokenize(str(dado['review_text']), language='portuguese')
+        dado['review_title_tokenizado'] = ' '.join(word_tokenize(str(dado['review_title']), language='portuguese'))
+        dado['review_text_tokenizado'] = ' '.join(word_tokenize(str(dado['review_text']), language='portuguese'))
         dados_processados.append(dado)
     return dados_processados

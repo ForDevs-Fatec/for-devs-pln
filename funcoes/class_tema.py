@@ -6,18 +6,18 @@ import pandas as pd
 
 #data = documento tokenizado 
 def class_tema(data):
-    
     documents = data
-    corpus_df = DataFrame({"Document": documents})
+    corpus_df = pd.DataFrame(data)
+    test = corpus_df['review_text_tokenizado'].head(10000)
 
     tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
-    features = tfidf_vectorized.fit_transform(documents)
+    features = tfidf_vectorized.fit_transform(test)
     feature_vectors = features.toarray()
     similarity_matrix = cosine_similarity(feature_vectors)
     Z = linkage(similarity_matrix, 'ward')
-    max_dist = 1290.
+    max_dist = 100.
     cluster_labels = fcluster(Z, max_dist, criterion='distance')
     cluster_labels = DataFrame(cluster_labels, columns=['Cluster Label'])
     df = pd.concat([corpus_df, cluster_labels], axis=1)
 
-    return df
+    print(cluster_labels)

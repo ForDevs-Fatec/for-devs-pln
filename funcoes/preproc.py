@@ -25,6 +25,9 @@ def executarPreProcessamento(lista):
         }
         documento["review_text"] = remover_caracteres_especiais(documento["review_text"])
         documento["review_text"] = documento["review_text"].lower()
+
+        documento['review_title'] = remover_caracteres_especiais(documento['review_title'])
+        documento["review_title"] = documento['review_title']
         documentos.append(documento)
         i += 1
     return documentos
