@@ -13,6 +13,7 @@ from textblob import TextBlob
 
 # Determinar o sentimento com base na polaridade
 def determinar_sentimento(polaridade):
+    print(polaridade)
     if polaridade > 0:
         return 'Sentimento positivo'
     elif polaridade < 0:
@@ -32,9 +33,8 @@ def executar_analise_sentimento(dados):
     dados_processados = []
     for dado in dados:
         polaridade_text = TextBlob(str(dado['review_text'])).sentiment.polarity
-        polaridade_title = TextBlob(str(dado['review_title'])).sentiment.polarity
-        dado['sentiment_text'] = determinar_sentimento(polaridade_text)
-        dado['sentiment_title'] = determinar_sentimento(polaridade_title)
-
+        dado['sentiment'] = determinar_sentimento(polaridade_text)
+        print(dado['review_text'])
+        print('===========================================================')
         dados_processados.append(dado)
     return dados_processados

@@ -74,10 +74,11 @@ def executarPipeline(conn, cur, url, client):
     df = df.drop_duplicates()
     df = removerNulos(df)
     try:
+        client['dados'].delete_many({})
+        client['dados_processados'].delete_many({})
         print('a')
         dados = gerarDocuments(df.values.tolist())
         print('b')
-        client['dados'].delete_many({})
         client['dados'].insert_many(dados)
         print('c')
 
@@ -88,7 +89,6 @@ def executarPipeline(conn, cur, url, client):
         class_tema.class_tema(dados_processados)
         dados_processados = pipeline_analiseSentimento.executar_analise_sentimento(dados_processados)
         print('passou aqui')
-        client['dados_processados'].delete_many({})
         client['dados_processados'].insert_many(dados_processados)
         print(f"Total de registros na tabela 'reviews': {client['dados'].count()}")
     except Exception as e:
