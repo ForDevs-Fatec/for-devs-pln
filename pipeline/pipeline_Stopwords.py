@@ -32,13 +32,9 @@ def remover_stopwords(texto):
     palavras_sem_stopwords = [palavra for palavra in palavras if palavra.lower() not in stop_words_custom]
     return ' '.join(palavras_sem_stopwords)
 
-def executar_pipeline(dados):
-    dados_processados = []
-    for dado in dados:
-        dado['review_title'] = remover_stopwords(dado['review_title'])
-        dado['review_text'] = remover_stopwords(dado['review_text'])
-        dados_processados.append(dado)
-    return dados_processados
+def executar_pipeline(df):
+    df['review_text_normalized'] =  df['review_text_normalized'].apply(remover_stopwords)
+    return df
 
 # Aplicar a remoção das stops
 # for coluna in colunas_texto:

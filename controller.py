@@ -86,9 +86,9 @@ def analisarPorIdade(anoNascimento, tipo):
         {"erro": "erro ao executar análise"}
 
 @app.put("/pipeline")
-def executarPipeline():
+async def executarPipeline():
     try:
-        pipeline.executarPipeline(conn=conn, cur=cur, url=url, client=client)
+        await pipeline.executarPipeline(conn=conn, cur=cur, url=url, client=client)
         return {"message": "banco atualizado"}
     except:
         return {"erro": "erro ao atualizar banco"}

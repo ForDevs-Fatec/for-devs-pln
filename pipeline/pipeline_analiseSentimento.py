@@ -13,10 +13,9 @@ from textblob import TextBlob
 
 # Determinar o sentimento com base na polaridade
 def determinar_sentimento(polaridade):
-    print(polaridade)
-    if polaridade > 0:
+    if polaridade > 0.0:
         return 'Sentimento positivo'
-    elif polaridade < 0:
+    elif polaridade < 0.0:
         return 'Sentimento negativo'
     else:
         return 'Sentimento neutro'
@@ -32,9 +31,7 @@ def determinar_sentimento(polaridade):
 def executar_analise_sentimento(dados):
     dados_processados = []
     for dado in dados:
-        polaridade_text = TextBlob(str(dado['review_text'])).sentiment.polarity
+        polaridade_text = TextBlob(dado['review_text_tokenizado']).sentiment.polarity
         dado['sentiment'] = determinar_sentimento(polaridade_text)
-        print(dado['review_text'])
-        print('===========================================================')
         dados_processados.append(dado)
     return dados_processados

@@ -1,7 +1,8 @@
 import pandas as pd
-from funcoes import preproc
+from funcoes import preproc, class_tema, correcao_ortografica
 from pipeline import pipeline_Stopwords, pipeline_Tokenizacao, pipeline_analiseSentimento
 from funcoes import class_tema
+from sqlalchemy import create_engine
 
 def criarTabelaReviews(conn, cur):
     create_table_query = """
@@ -21,6 +22,20 @@ def criarTabelaReviews(conn, cur):
     reviewer_gender VARCHAR(1),
     reviewer_state VARCHAR(255)
     );
+    """
+    cur.execute(create_table_query)
+    conn.commit()
+    return True
+
+def criarTabelaReviewsProcessados(conn, cur):
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS reviews_processados (
+    submission_date TIMESTAMP,
+    reviewer_id VARCHAR(255),
+    review_text_normalized VARCHAR(255),
+    sentiment_text VARCHAR(255),
+    classificacao_tema INT
+    )
     """
     cur.execute(create_table_query)
     conn.commit()
@@ -74,22 +89,28 @@ def executarPipeline(conn, cur, url, client):
     df = df.drop_duplicates()
     df = removerNulos(df)
     try:
-        client['dados'].delete_many({})
-        client['dados_processados'].delete_many({})
-        print('a')
-        dados = gerarDocuments(df.values.tolist())
-        print('b')
-        client['dados'].insert_many(dados)
-        print('c')
+        engine = create_engine('postgresql://' + url.netloc)
+        df.to_sql('reviews', engine, if_exists='replace', index=False)
+        print('tabela reviews atualizada')
+        print(df.head(5))
+        df_processado = df[['submission_date', 'reviewer_id', 'review_text']].copy()
+        print('tabela clonada')
 
-        dados_processados = preproc.executarPreProcessamento(dados)
-        dados_processados = pipeline_Stopwords.executar_pipeline(dados_processados)
-        dados_processados = pipeline_Tokenizacao.tokenizar(dados_processados)
-        #classificacao
-        class_tema.class_tema(dados_processados)
-        dados_processados = pipeline_analiseSentimento.executar_analise_sentimento(dados_processados)
-        print('passou aqui')
-        client['dados_processados'].insert_many(dados_processados)
-        print(f"Total de registros na tabela 'reviews': {client['dados'].count()}")
+        df_processado = preproc.executarPreProcessamento(df_processado, df)
+        df_processado = pipeline_Stopwords.executar_pipeline(df_processado)
+        df_processado = correcao_ortografica.corrigir_textos(df_processado)
+        df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
+        df_processado['sentiment_text'] = ''
+        df_processado['classificacao_tema'] = 1
+        df_processado.drop('review_text', axis=1)
+        df_processado.to_sql('reviews_processados', engine, if_exists='replace', index=False)
+        cur.execute("SELECT COUNT(*) FROM reviews")
+        count = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM reviews_processados")
+        count_processados = cur.fetchone()[0]
+        print(f"Total de registros na tabela 'reviews': {count}")
+        print(f"Total de registros na tabela 'reviews_processados': {count_processados}")
+        conn.close()
+        engine.dispose()
     except Exception as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
