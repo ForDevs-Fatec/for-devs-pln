@@ -5,25 +5,21 @@ from pandas import DataFrame
 import pandas as pd
 
 #data = documento tokenizado 
-def class_tema(data):
+def class_tema(df):
     tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
+    df_utilizado = df.head(10000)
     max_dist = 100.
 
-    for i in range(0, len(data), 10000):
-        documents = [item['review_text_tokenizado'] for item in data[i: i + 10000]]
+    documents = df_utilizado['review_text_normalized']
+    corpus_df = DataFrame({"Document": documents})
 
-        features = tfidf_vectorized.fit_transform(documents)
-        feature_vectors = features.toarray()
+    tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
+    features = tfidf_vectorized.fit_transform(documents)
+    feature_vectors = features.toarray()
+    similarity_matrix = cosine_similarity(feature_vectors)
+    Z = linkage(similarity_matrix, 'ward')
+    cluster_labels = fcluster(Z, max_dist, criterion='distance')
+    cluster_labels = DataFrame(cluster_labels, columns=['Cluster Label'])
+    df['classificacao_tema'] = cluster_labels['Cluster Label']
 
-        # Similarity matrix computation
-        similarity_matrix = cosine_similarity(feature_vectors)
-        Z = linkage(similarity_matrix, 'ward')
-        cluster_labels = fcluster(Z, max_dist, criterion='distance')
-        cluster_labels = DataFrame(cluster_labels, columns=['Cluster Label'])
-
-        j = 0
-        for label in cluster_labels:
-            data[i + j]['classificacao_tema'] = label
-            j += 1
-    
-    return data
+    return df

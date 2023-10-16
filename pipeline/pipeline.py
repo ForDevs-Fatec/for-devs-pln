@@ -89,10 +89,11 @@ def executarPipeline(conn, cur, url, client):
     df = df.drop_duplicates()
     df = removerNulos(df)
     try:
+        criarTabelaReviews(conn, cur)
         engine = create_engine('postgresql://' + url.netloc)
         df.to_sql('reviews', engine, if_exists='replace', index=False)
         print('tabela reviews atualizada')
-        print(df.head(5))
+        #criarTabelaReviewsProcessados(conn, cur)
         df_processado = df[['submission_date', 'reviewer_id', 'review_text']].copy()
         print('tabela clonada')
 
@@ -100,8 +101,8 @@ def executarPipeline(conn, cur, url, client):
         df_processado = pipeline_Stopwords.executar_pipeline(df_processado)
         df_processado = correcao_ortografica.corrigir_textos(df_processado)
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
-        df_processado['sentiment_text'] = ''
-        df_processado['classificacao_tema'] = 1
+        df_processado = class_tema.class_tema(df_processado)
+        df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         df_processado.drop('review_text', axis=1)
         df_processado.to_sql('reviews_processados', engine, if_exists='replace', index=False)
         cur.execute("SELECT COUNT(*) FROM reviews")
