@@ -6,7 +6,7 @@
 ### 🔍 Análise Estática do Repositório
 
 <p align = "center">
-<img src = "https://github.com/ForDevs-Fatec/Documentation/blob/main/Analise%20pln%20sprint%201.jpg" >
+<img src = "https://github.com/ForDevs-Fatec/Documentation/blob/main/Analise%20pln%20sprint%202.jpg" >
 
 ### :gear: Como utilizar
 
