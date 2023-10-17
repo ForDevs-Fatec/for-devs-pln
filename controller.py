@@ -96,31 +96,13 @@ async def executarPipeline():
 @app.get("/get-all")
 def getAll():
     try:
-        # Recupere todos os documentos e converta para uma lista de dicionários
-        dados_cursor = client['dados'].find()
-        
-        # Use dumps do bson.json_util para serializar os dados
-        dados_json = dumps(dados_cursor)
-        
-        # Converta o JSON serializado de volta para um dicionário Python
-        dados = json.loads(dados_json)
-        
-        return {"data": dados}
+        return pesquisa.getAll(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
 
 @app.get("/get-all-processados")
 def getAllProcessados():
     try:
-        # Recupere todos os documentos e converta para uma lista de dicionários
-        dados_cursor = client['dados_processados'].find()
-        
-        # Use dumps do bson.json_util para serializar os dados
-        dados_json = dumps(dados_cursor)
-        
-        # Converta o JSON serializado de volta para um dicionário Python
-        dados = json.loads(dados_json)
-        
-        return {"data": dados}
+        return pesquisa.getAllProcessados(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
