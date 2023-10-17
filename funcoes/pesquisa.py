@@ -24,7 +24,7 @@ def pesquisarReviews(param: str, conn, cur):
     return resultado
 
 def getAll(conn, cur):
-    query = "SELECT * FROM reviews"
+    query = "SELECT * FROM reviews LIMIT 10000"
     cur.execute(query)
     result = cur.fetchall()
     resultado = []
@@ -49,7 +49,7 @@ def getAll(conn, cur):
     return resultado
 
 def getAllProcessados(conn, cur):
-    query = "SELECT * FROM reviews_processados"
+    query = "SELECT * FROM reviews_processados LIMIT 10000"
     cur.execute(query)
     result = cur.fetchall()
     resultado = []
