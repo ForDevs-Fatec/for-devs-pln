@@ -106,3 +106,31 @@ def getAllProcessados():
         return pesquisa.getAllProcessados(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
+    
+@app.get("/getClassificacaoTemaEContagem")
+def getClassificacaoTemaEContagem():
+    try:
+        return pesquisa.getClassificacaoTemaEContagem(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+    
+@app.get("/getClassificacaoTemaTempo")
+def getClassificacaoTemaTempo():
+    try:
+        return pesquisa.getClassificacaoTemaTempo(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+    
+@app.get("/getClassificacaoTemaSentimento")
+def getClassificacaoTemaSentimento():
+    try:
+        return pesquisa.getClassificacaoTemaSentimento(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+
+@app.get("/getClassificacaoTemaSentimentoEstado")
+def getClassificacaoTemaSentimentoEstado():
+    try:
+        return pesquisa.getClassificacaoTemaSentimentoEstado(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
