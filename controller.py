@@ -106,3 +106,17 @@ def getAllProcessados():
         return pesquisa.getAllProcessados(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
+    
+@app.get("/get-media-temas")
+def getMediaTemas():
+    try:
+        return pesquisa.getMedia(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+
+@app.get("/get-categoria-temas")
+def getCategoriaTemas():
+    try:
+        return pesquisa.getCategoriasPorTema(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
