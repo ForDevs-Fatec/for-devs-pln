@@ -177,7 +177,7 @@ def getClassificacaoTemaSentimento(conn, cur):
     return resultado
 
 def getClassificacaoTemaSentimentoEstado(conn, cur):
-    query = 'SELECT r.reviewer_state, rp.classificacao_tema, rp.sentiment_text FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id LIMIT 10000;'
+    query = 'SELECT r.reviewer_state, rp.classificacao_tema, rp.sentiment_text, COUNT (*) as contagem  FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id GROUP BY rp.classificacao_tema, rp.sentiment_text, r.reviewer_state LIMIT 10000;'
     cur.execute(query)
     result = cur.fetchall()   
 
@@ -187,10 +187,11 @@ def getClassificacaoTemaSentimentoEstado(conn, cur):
         newRow = {
             'estado': row[0],
             'classificacao_tema': row[1],
-            'sentimento_text': row[2]
+            'sentimento_text': row[2],
+            'quantidade': row[3],
         }
         resultado.append(newRow)
-    
+
     return resultado
 
 def getDistribuicaoSentimentosFaixaEtariaTema(conn, cur):
