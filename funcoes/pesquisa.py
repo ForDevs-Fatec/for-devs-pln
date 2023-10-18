@@ -109,9 +109,7 @@ def getCategoriasPorTema(conn, cur):
                 ROW_NUMBER() OVER (PARTITION BY classificacao_tema ORDER BY frequencia DESC) AS ranking
             FROM
                 RankedReviews
-        ) RankedAndNumbered
-        WHERE
-            ranking = 1;
+        ) RankedAndNumbered;
     """
     cur.execute(query)
     result = cur.fetchall()
