@@ -152,6 +152,6 @@ def getCategoriaTemas():
 @app.get("/getDistribuicaoSentimentosFaixaEtariaTema")
 def getDistribuicaoSentimentosFaixaEtariaTema():
     try:
-        return pesquisa.getClassificacaoTemaSentimentoEstado(conn=conn, cur=cur)
+        return pesquisa.getDistribuicaoSentimentosFaixaEtariaTema(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}

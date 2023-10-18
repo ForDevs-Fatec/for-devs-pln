@@ -194,20 +194,7 @@ def getClassificacaoTemaSentimentoEstado(conn, cur):
     return resultado
 
 def getDistribuicaoSentimentosFaixaEtariaTema(conn, cur):
-    query = """
-        SELECT 
-            CASE
-                WHEN reviewer_birth_year <= 19 THEN 'Jovem'
-                WHEN reviewer_birth_year >= 20 AND reviewer_birth_year <= 59 THEN 'Adulto'
-                ELSE 'Idoso'
-            END AS faixa_etaria,
-            rp.classificacao_tema,
-            rp.sentiment_text,
-            COUNT(*) 
-        FROM review r
-        JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id
-        GROUP BY faixa_etaria, rp.classificacao_tema, rp.sentiment_text;
-    """
+    query = 'SELECT r.reviewer_birth_year, rp.classificacao_tema, rp.sentiment_text, COUNT (*) as contagem FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id GROUP BY r.reviewer_birth_year, rp.classificacao_tema, rp.sentiment_text LIMIT 10000;'
     cur.execute(query)
     result = cur.fetchall()
 
@@ -215,7 +202,7 @@ def getDistribuicaoSentimentosFaixaEtariaTema(conn, cur):
 
     for row in result:
         newRow = {
-            'faixa_etaria': row[0],
+            'reviewer_birth_year': row[0],
             'classificacao_tema': row[1],
             'sentimento_text': row[2],
             'quantidade': row[3],
