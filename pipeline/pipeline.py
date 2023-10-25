@@ -1,8 +1,29 @@
 import pandas as pd
 from funcoes import preproc, class_tema, correcao_ortografica
 from pipeline import pipeline_Stopwords, pipeline_Tokenizacao, pipeline_analiseSentimento
-from funcoes import class_tema
 from sqlalchemy import create_engine
+import time
+
+def conectar_banco(conn, cur):
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS tempos (
+        funcao TEXT,
+        tempo FLOAT);
+    """
+    insert = """INSERT INTO tempos VALUES""", (funcao.__name__, total)
+    cur.execute(create_table_query, insert)
+    conn.commit()
+    return True
+
+def medir(funcao, *args, **kwargs):
+    inicio = time.time()
+    funcao(*args, **kwargs)  # chama função genérica
+    tempo = time.time() - inicio
+
+    conectar_banco()
+
+    print(f"Tempo para {funcao.__name__}: {tempo} segundos")
+    return tempo
 
 def criarTabelaReviews(conn, cur):
     create_table_query = """
@@ -98,11 +119,17 @@ def executarPipeline(conn, cur, url, client):
         print('tabela clonada')
 
         df_processado = preproc.executarPreProcessamento(df_processado, df)
+        #medir(preproc.executarPreProcessamento, df_processado, df)
         df_processado = pipeline_Stopwords.executar_pipeline(df_processado)
+        #medir(pipeline_Stopwords.executar_pipeline, df_processado, df)
         df_processado = correcao_ortografica.corrigir_textos(df_processado)
+        #medir(correcao_ortografica.corrigir_textos, df_processado, df)
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
+        #medir(cpipeline_Tokenizacao.tokenizar, df_processado, df)
         df_processado = class_tema.class_tema(df_processado)
+        #medir(class_tema.class_tema, df_processado, df)
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
+        #medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado, df)
         df_processado.drop('review_text', axis=1)
         df_processado.to_sql('reviews_processados', engine, if_exists='replace', index=False)
         cur.execute("SELECT COUNT(*) FROM reviews")

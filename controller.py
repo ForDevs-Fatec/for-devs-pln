@@ -160,3 +160,10 @@ def getDistribuicaoSentimentosFaixaEtariaTema():
         return pesquisa.getDistribuicaoSentimentosFaixaEtariaTema(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
+    
+@app.get("/getMedicoes")
+def getMedicoes():
+    try:
+        return pesquisa.getMedicoes(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}

@@ -1,36 +1,22 @@
 import time
-import sqlite3
-import pandas as pd
+from sqlalchemy import create_engine
 
-# Função para medir
+def conectar_banco(conn, cur):
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS tempos (
+        funcao TEXT, 
+        tempo FLOAT);
+    """
+    insert = """INSERT INTO tempos VALUES""", (funcao.__name__, total)
+    cur.execute(create_table_query, insert)
+    conn.commit()
+    return True
+
 def metrica(funcao, *args, **kwargs):
     inicio = time.time()
-    resultado = funcao(*args, **kwargs) # chama função generica
+    funcao(*args, **kwargs)  # chama função genérica
     total = time.time() - inicio
-    print("Tempo" , total)
 
-    print ("conexao = connect('banco.db')") #remover do print
-    print ("cursor = conexao.cursor()") #remover do print
+    conectar_banco()
 
-    # Criar uma tabela se não existir
-    print ("cursor.execute('''CREATE TABLE IF NOT EXISTS tempos (funcoes TEXT, tempo REAL)''')") # remover do print
-
-    # Inserir o tempo decorrido na tabela
-    print("cursor.execute(f'INSERT INTO tempos ({funcao}) VALUES ({total})')") # remover do print
-
-    # Commit no banco
-    print ("conexao.commit()")
-    print ("conexao.close()")
-
-    return resultado, total
-
-def qualquer(*args):
-    soma = 0
-    time.sleep(2)
-    for numero in args:
-        soma += numero
-    return soma
-
-# Medir o tempo de função qualquer
-resultado = metrica(qualquer, 1, 2, 3, 4, 5)
-print("Soma:", resultado)
+    return total
