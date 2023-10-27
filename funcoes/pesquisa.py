@@ -220,7 +220,7 @@ def getMedicoes(conn, cur):
 
     for row in result:
         newRow = {
-            'funcao': row[0],
+            'função': row[0],
             'tempo': row[1]
         }
         resultado.append(newRow)
