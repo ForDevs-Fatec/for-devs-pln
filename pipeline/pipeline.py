@@ -88,6 +88,8 @@ def executarPipeline(conn, cur, url, client):
     df = pd.read_csv(csv_url, low_memory=True, sep=',')
     df = df.drop_duplicates()
     df = removerNulos(df)
+    df = df.sort_values(by='submission_date', ascending=False)
+    df = df.head(10000).copy()
     try:
         criarTabelaReviews(conn, cur)
         engine = create_engine('postgresql://' + url.netloc)
