@@ -108,9 +108,5 @@ def analisar(texto):
     return sentimento[0]
 
 def executar_analise_sentimento(df):
-    df_utilizado = df.head(10000)
-    df_utilizado['sentiment_text'] = df_utilizado['review_text_normalized'].apply(analisar)
-    
-    for i in range(len(df_utilizado)):
-        df.loc[i, 'sentiment_text'] = df_utilizado.loc[i, 'sentiment_text']
+    df['sentiment_text'] = df['review_text_normalized'].apply(analisar)
     return df

@@ -46,11 +46,6 @@ def hello_world_root():
 def pesquisar(parametro_de_pesquisa: str):
     try:
         resposta = pesquisa.pesquisarReviews(param=parametro_de_pesquisa, conn=conn, cur=cur)
-
-        # tk
-        for item in resposta:
-            item['review_text_normalized'] = pipeline.pipeline_Tokenizacao.tokenize_unique(item['review_text_normalized'])
-
         return resposta
     except:
         {"erro": "erro ao executar busca"}
