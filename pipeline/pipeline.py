@@ -1,8 +1,15 @@
 import pandas as pd
 from funcoes import preproc, class_tema, correcao_ortografica
 from pipeline import pipeline_Stopwords, pipeline_Tokenizacao, pipeline_analiseSentimento
-from funcoes import class_tema
 from sqlalchemy import create_engine
+import time
+
+def medir(funcao, *args, **kwargs):
+    inicio = time.time()
+    funcao(*args, **kwargs)  # chama função genérica
+    tempo = time.time() - inicio
+    print(f"Tempo para {funcao.__name__}: {tempo} segundos")
+    return tempo
 
 def criarTabelaReviews(conn, cur):
     create_table_query = """
@@ -39,6 +46,15 @@ def criarTabelaReviewsProcessados(conn, cur):
     """
     cur.execute(create_table_query)
     conn.commit()
+    return True
+
+def criarTabelaTempos(conn, cur):
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS tempos (funcao TEXT,tempo FLOAT);
+    """
+    cur.execute(create_table_query)
+    conn.commit()
+    print("Tabela tempos criada")
     return True
 
 def removerNulos(df):
@@ -100,19 +116,58 @@ def executarPipeline(conn, cur, url, client):
         print('tabela clonada')
 
         df_processado = preproc.executarPreProcessamento(df_processado, df)
+        tempo_prepro = medir(preproc.executarPreProcessamento, df_processado, df)
         df_processado = pipeline_Stopwords.executar_pipeline(df_processado)
+        tempo_stopwork = medir(pipeline_Stopwords.executar_pipeline, df_processado)
         df_processado = correcao_ortografica.corrigir_textos(df_processado)
+        tempo_correcao = medir(correcao_ortografica.corrigir_textos, df_processado)
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
+        tempo_token = medir(pipeline_Tokenizacao.tokenizar, df_processado)
         df_processado = class_tema.class_tema(df_processado)
+        tempo_classetema = medir(class_tema.class_tema, df_processado)
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
+        tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
         df_processado.drop('review_text', axis=1)
         df_processado.to_sql('reviews_processados', engine, if_exists='replace', index=False)
+
+        print("Tempo total da Pipeline: ", tempo_prepro + tempo_stopwork + tempo_correcao + tempo_token + tempo_classetema + tempo_sentimento, " segundos")
+
+        criarTabelaTempos(conn, cur)
+
+        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+                        VALUES ('preproc', {tempo_prepro});""")
+        
+        print ("Inserido medição tempo pre-processamento")
+
+        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+                        VALUES ('stopwords', {tempo_stopwork});""")
+        print ("Inserido medição tempo stopwork")
+
+        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+                        VALUES ('correcao_ortografica', {tempo_correcao});""")
+        print ("Inserido medição tempo correção ortografica")
+
+        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+                        VALUES ('tokenização', {tempo_token});""")
+        print ("Inserido medição tempo correção ortografica")
+
+        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+                        VALUES ('class_tema', {tempo_classetema});""")
+        print ("Inserido medição tempo classificação de tema")
+
+        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+                        VALUES ('sentimento', {tempo_sentimento});""")
+        print ("Inserido medição tempo analise de sentimento")
+
+        conn.commit()
+        
         cur.execute("SELECT COUNT(*) FROM reviews")
         count = cur.fetchone()[0]
         cur.execute("SELECT COUNT(*) FROM reviews_processados")
         count_processados = cur.fetchone()[0]
         print(f"Total de registros na tabela 'reviews': {count}")
         print(f"Total de registros na tabela 'reviews_processados': {count_processados}")
+        
         conn.close()
         engine.dispose()
     except Exception as e:

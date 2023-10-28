@@ -218,3 +218,20 @@ def getDistribuicaoSentimentosFaixaEtariaTema(conn, cur):
         resultado.append(newRow)
 
     return resultado
+
+def getMedicoes(conn, cur):
+    query = 'SELECT funcao, tempo FROM tempos;'
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultado = []
+
+    for row in result:
+        newRow = {
+            'função': row[0],
+            'tempo': row[1]
+        }
+        resultado.append(newRow)
+
+    return resultado
+
