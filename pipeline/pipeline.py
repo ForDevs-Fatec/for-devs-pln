@@ -124,6 +124,7 @@ def executarPipeline(conn, cur, url, client):
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
         tempo_token = medir(pipeline_Tokenizacao.tokenizar, df_processado)
         df_processado = class_tema.class_tema(df_processado)
+        class_tema.class_tema_new(df_processado)
         tempo_classetema = medir(class_tema.class_tema, df_processado)
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
