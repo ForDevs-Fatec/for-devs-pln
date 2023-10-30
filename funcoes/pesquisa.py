@@ -1,5 +1,6 @@
 from pipeline.pipeline_Tokenizacao import tokenize_unique
 from pipeline.pipeline_Stopwords import remover_stopwords
+from pipeline.pipeline_analiseSentimento import analisar  
 
 def pesquisarReviews(param: str, conn, cur):
     # Tokeniza o parâmetro de pesquisa - tarefa 1.9
@@ -9,6 +10,10 @@ def pesquisarReviews(param: str, conn, cur):
     # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
     param_sem_stopwords = remover_stopwords(param)
     print(param_sem_stopwords)
+
+    # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
+    sentimento_param = analisar(param)
+    print(param_sem_stopwords) 
 
     # Construa a consulta SQL usando os tokens
     query = f"SELECT * FROM reviews WHERE {' OR '.join([f'review_text LIKE "%{token}%"' for token in param_tokens])}"
@@ -31,7 +36,8 @@ def pesquisarReviews(param: str, conn, cur):
             'review_text': row[10],
             'reviewer_birth_year': row[11],
             'reviewer_gender': row[12],
-            'reviewer_state': row[13]
+            'reviewer_state': row[13],
+            'sentimento_param': sentimento_param,  # Armazena o sentimento do parâmetro de pesquisa
         }
         resultado.append(newRow)
 
