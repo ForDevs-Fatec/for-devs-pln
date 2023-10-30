@@ -1,13 +1,18 @@
-from pipeline.pipeline_Tokenizacao import tokenize_unique  
+from pipeline.pipeline_Tokenizacao import tokenize_unique
+from pipeline.pipeline_Stopwords import remover_stopwords
+
 def pesquisarReviews(param: str, conn, cur):
-    param_tokens = tokenize_unique(param)
-
     # Tokeniza o parâmetro de pesquisa - tarefa 1.9
-    parametro_pesquisa_tokenizado = tokenize_unique(param)
-    print(parametro_pesquisa_tokenizado)
+    param_tokens = tokenize_unique(param)
+    print(param_tokens)
 
-    query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%'"
-    
+    # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
+    param_sem_stopwords = remover_stopwords(param)
+    print(param_sem_stopwords)
+
+    # Construa a consulta SQL usando os tokens
+    query = f"SELECT * FROM reviews WHERE {' OR '.join([f'review_text LIKE "%{token}%"' for token in param_tokens])}"
+
     cur.execute(query)
     result = cur.fetchall()
     resultado = []
@@ -20,12 +25,12 @@ def pesquisarReviews(param: str, conn, cur):
             'product_brand': row[4],
             'site_category_lv1': row[5],
             'site_category_lv2': row[6],
-            'review_title':  row[7],
-            'overall_rating':  row[8],
-            'recommend_to_a_friend':  row[9],
-            'review_text':  row[10],  # retorna a review_text tokenizada 
-            'reviewer_birth_year':  row[11],
-            'reviewer_gender':  row[12],
+            'review_title': row[7],
+            'overall_rating': row[8],
+            'recommend_to_a_friend': row[9],
+            'review_text': row[10],
+            'reviewer_birth_year': row[11],
+            'reviewer_gender': row[12],
             'reviewer_state': row[13]
         }
         resultado.append(newRow)
