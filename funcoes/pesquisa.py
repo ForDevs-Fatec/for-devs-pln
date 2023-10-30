@@ -8,15 +8,15 @@ def pesquisarReviews(param: str, conn, cur):
     print(param_tokens)
 
     # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
-    param_sem_stopwords = remover_stopwords(param)
+    param_sem_stopwords = remover_stopwords(param_tokens)
     print(param_sem_stopwords)
 
     # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
-    sentimento_param = analisar(param)
-    print(param_sem_stopwords) 
+    sentimento_param = analisar(param_sem_stopwords)
+    print(sentimento_param) 
 
     # Construa a consulta SQL usando os tokens
-    query = f"SELECT * FROM reviews WHERE {' OR '.join([f'review_text LIKE "%{token}%"' for token in param_tokens])}"
+    query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%'"
 
     cur.execute(query)
     result = cur.fetchall()
