@@ -3,23 +3,11 @@ from sklearn.neural_network import MLPClassifier
 import numpy as np
 import pandas as pd
 
-
-
-
-# Determinar o sentimento com base na polaridade
-def determinar_sentimento(polaridade):
-    if polaridade > 0.0:
-        return 'Sentimento positivo'
-    elif polaridade < 0.0:
-        return 'Sentimento negativo'
-    else:
-        return 'Sentimento neutro'
-
 def analisar(texto):
     classified_reviews= [
     {'corpus': "adorei o produto", 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "amei o produto ", 'review_type': 'positive', 'feature_vector': []},
-    {'corpus': "achei o produto excelente", 'review_type': 'positive', 'feature_vector': []},
+    {'corpus': "produto excelente", 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "com certeza comprarei novamente ", 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "produto muito bom", 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "atende as expectativas", 'review_type': 'positive', 'feature_vector': []},
@@ -27,7 +15,12 @@ def analisar(texto):
     {'corpus': 'recomendo a todos', 'review_type': 'positive', 'feature_vector': []},
     {'corpus': 'entrega no prazo', 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "comprarei de novo", 'review_type': 'positive', 'feature_vector': []},
-    {'corpus': "Produto maravilhoso", "review_type": 'positive', 'feature_vector': []},
+    {'corpus': "produto maravilhoso", "review_type": 'positive', 'feature_vector': []},
+    {'corpus': "produto de parabéns", "review_type": 'positive', 'feature_vector': []},
+    {'corpus': "super recomendo excelente", "review_type": 'positive', 'feature_vector': []},
+    {'corpus': "excelente qualidade", "review_type": 'positive', 'feature_vector': []},
+    {'corpus': "produto otimo", "review_type": 'positive', 'feature_vector': []},
+
     {'corpus': "detestei o produto ", 'review_type': 'negative', 'feature_vector': []},
     {'corpus': "produto horrível ", 'review_type': 'negative', 'feature_vector': []},
     {'corpus': "nunca mais compro novamente ", 'review_type': 'negative', 'feature_vector': []},
@@ -35,14 +28,18 @@ def analisar(texto):
     {'corpus': "entrega atrasou", "review_type": 'negative', 'feature_vector': []},
     {'corpus': "produto com problemas", "review_type": 'negative', 'feature_vector': []},
     {'corpus': "produto não funciona", "review_type": 'negative', 'feature_vector': []},
-    
     {'corpus': "pior produto que comprei ", 'review_type': 'negative', 'feature_vector': []},
     {'corpus': "não é bom", "review_type": 'negative', 'feature_vector': []},
     {'corpus': "não recomendo", "review_type": 'negative', 'feature_vector': []},
+    {'corpus': "produto péssimo", "review_type": 'negative', 'feature_vector': []},
+    {'corpus': "não recebi", 'review_type': 'negative', 'feature_vector': []},
+
     {'corpus': "produto satisfatório", 'review_type': 'neutral', 'feature_vector': []},
     {'corpus': "produto atende as necessidades", 'review_type': 'neutral', 'feature_vector': []},
     {'corpus': "produto ok", 'review_type': 'neutral', 'feature_vector': []},
-    {'corpus': "produto razoável", 'review_type': 'neutral', 'feature_vector': []}
+    {'corpus': "produto razoável", 'review_type': 'neutral', 'feature_vector': []},
+    {'corpus': "não informado", 'review_type': 'neutral', 'feature_vector': []},
+    
     ]
 
     documento = texto

@@ -137,27 +137,27 @@ def executarPipeline(conn, cur, url, client):
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('preproc', {tempo_prepro});""")
         
-        print ("Inserido medição tempo pre-processamento")
+        print ("Inserido medição tempo pre-processamento: ", tempo_prepro)
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('stopwords', {tempo_stopwork});""")
-        print ("Inserido medição tempo stopwork")
+        print ("Inserido medição tempo stopwork: ", tempo_stopwork)
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('correcao_ortografica', {tempo_correcao});""")
-        print ("Inserido medição tempo correção ortografica")
+        print ("Inserido medição tempo correção ortografica: ", tempo_correcao)
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('tokenização', {tempo_token});""")
-        print ("Inserido medição tempo correção ortografica")
+        print ("Inserido medição tempo correção ortografica: ", tempo_token)
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('class_tema', {tempo_classetema});""")
-        print ("Inserido medição tempo classificação de tema")
+        print ("Inserido medição tempo classificação de tema: ", tempo_classetema)
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('sentimento', {tempo_sentimento});""")
-        print ("Inserido medição tempo analise de sentimento")
+        print ("Inserido medição tempo analise de sentimento: ", tempo_sentimento)
 
         conn.commit()
         

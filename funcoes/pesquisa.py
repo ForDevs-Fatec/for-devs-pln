@@ -4,9 +4,9 @@ def pesquisarReviews(param: str, conn, cur):
 
     # Tokeniza o parâmetro de pesquisa - tarefa 1.9
     parametro_pesquisa_tokenizado = tokenize_unique(param)
+    print(parametro_pesquisa_tokenizado)
 
-    search_conditions = " OR ".join([f"review_text LIKE '%{token}%'" for token in param_tokens])
-    query = f"SELECT *, '{parametro_pesquisa_tokenizado}' AS parametro_pesquisa_tokenizado FROM reviews WHERE {search_conditions} AND review_text LIKE '%{parametro_pesquisa_tokenizado}%'"
+    query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%'"
     
     cur.execute(query)
     result = cur.fetchall()
@@ -23,17 +23,12 @@ def pesquisarReviews(param: str, conn, cur):
             'review_title':  row[7],
             'overall_rating':  row[8],
             'recommend_to_a_friend':  row[9],
-            'review_text':  tokenize_unique(row[10]),  # retorna a review_text tokenizada 
+            'review_text':  row[10],  # retorna a review_text tokenizada 
             'reviewer_birth_year':  row[11],
             'reviewer_gender':  row[12],
-            'reviewer_state': row[13],
-            'parametro_pesquisa_tokenizado': parametro_pesquisa_tokenizado
+            'reviewer_state': row[13]
         }
         resultado.append(newRow)
-
-    # Tokeniza os textos dos resultados antes de puxar de volta
-    for item in resultado:
-        item['review_text'] = tokenize_unique(item['review_text'])
 
     return resultado
 
