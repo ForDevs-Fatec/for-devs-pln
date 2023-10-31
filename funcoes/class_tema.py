@@ -16,12 +16,9 @@ from numpy import average
 def class_tema(df):
     tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
     df
-    max_dist = 100.
+    max_dist = 150.
 
     documents = df['review_text_normalized']
-    corpus_df = DataFrame({"Document": documents})
-
-    tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
     features = tfidf_vectorized.fit_transform(documents)
     feature_vectors = features.toarray()
     similarity_matrix = cosine_similarity(feature_vectors)
@@ -29,7 +26,7 @@ def class_tema(df):
     cluster_labels = fcluster(Z, max_dist, criterion='distance')
     cluster_labels = DataFrame(cluster_labels, columns=['Cluster Label'])
     df['classificacao_tema'] = cluster_labels['Cluster Label']
-
+    print(cluster_labels.head(5))
     return df
 
 def class_tema_new(df):

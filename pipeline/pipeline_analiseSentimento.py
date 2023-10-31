@@ -102,9 +102,9 @@ def analisar(texto):
 
     sentimento = classifier.predict([unclassified_review['feature_vector']])
 
-    print(texto)
-    print(sentimento)
-    print('==================================================================')
+    # print(texto)
+    # print(sentimento)
+    # print('==================================================================')
     return sentimento[0]
 
 def executar_analise_sentimento(df):

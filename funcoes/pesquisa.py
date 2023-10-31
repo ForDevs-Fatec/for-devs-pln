@@ -64,6 +64,7 @@ def getAllProcessados(conn, cur):
             'sentiment_text': row[5]
         }
         resultado.append(newRow)
+    print(resultado)
     return resultado
 
 def getMedia(conn, cur):

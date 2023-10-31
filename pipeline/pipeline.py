@@ -111,7 +111,7 @@ def executarPipeline(conn, cur, url, client):
         engine = create_engine('postgresql://' + url.netloc)
         df.to_sql('reviews', engine, if_exists='replace', index=False)
         print('tabela reviews atualizada')
-        #criarTabelaReviewsProcessados(conn, cur)
+        criarTabelaReviewsProcessados(conn, cur)
         df_processado = df[['submission_date', 'reviewer_id', 'review_text']].copy()
         print('tabela clonada')
 
@@ -124,7 +124,7 @@ def executarPipeline(conn, cur, url, client):
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
         tempo_token = medir(pipeline_Tokenizacao.tokenizar, df_processado)
         df_processado = class_tema.class_tema(df_processado)
-        class_tema.class_tema_new(df_processado)
+        #class_tema.class_tema_new(df_processado)
         tempo_classetema = medir(class_tema.class_tema, df_processado)
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
