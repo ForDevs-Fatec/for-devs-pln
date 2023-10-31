@@ -12,7 +12,7 @@ def pesquisarReviews(param: str, conn, cur):
     print(param_sem_stopwords)
 
     # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
-    sentimento_param = analisar(param_sem_stopwords)
+    sentimento_param = analisar(param, param_sem_stopwords)
     print(sentimento_param) 
 
     # Construa a consulta SQL usando os tokens
@@ -21,6 +21,7 @@ def pesquisarReviews(param: str, conn, cur):
     cur.execute(query)
     result = cur.fetchall()
     resultado = []
+    print(result)
     for row in result:
         newRow = {
             'submission_date': row[0],
@@ -36,10 +37,11 @@ def pesquisarReviews(param: str, conn, cur):
             'review_text': row[10],
             'reviewer_birth_year': row[11],
             'reviewer_gender': row[12],
-            'reviewer_state': row[13],
-            'sentimento_param': sentimento_param,  # Armazena o sentimento do parâmetro de pesquisa
+            'reviewer_state': row[13]
         }
         resultado.append(newRow)
+
+    print(resultado)
 
     return resultado
 

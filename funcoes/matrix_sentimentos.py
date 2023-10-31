@@ -101,10 +101,10 @@ valores_diferentes_de_zero, accuracy, precision_positivo, precision_negativo = c
 print("\n \n")
 print("Matriz de Confusão:")
 
-print(valores_diferentes_de_zero[0], valores_diferentes_de_zero[1], valores_diferentes_de_zero[2])
-print(valores_diferentes_de_zero[3], valores_diferentes_de_zero[4], valores_diferentes_de_zero[5])
-print(valores_diferentes_de_zero[6], valores_diferentes_de_zero[7], valores_diferentes_de_zero[8])
-
+print("        Positivo |   Neutro |  Negativo ")
+print("Positivo   ", valores_diferentes_de_zero[0],"|     ", valores_diferentes_de_zero[1],"|    ", valores_diferentes_de_zero[2]) 
+print("Neutro       ", valores_diferentes_de_zero[3],"|      ", valores_diferentes_de_zero[4],"|    ", valores_diferentes_de_zero[5])
+print("Negativo   ", valores_diferentes_de_zero[6],"|     ", valores_diferentes_de_zero[7],"|    ", valores_diferentes_de_zero[8])
 
 print("\n \n")
 print("Acurácia:", accuracy*100, " %" )

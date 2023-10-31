@@ -3,7 +3,7 @@ from sklearn.neural_network import MLPClassifier
 import numpy as np
 import pandas as pd
 
-def analisar(texto):
+def analisar(review_text, texto):
     classified_reviews= [
     {'corpus': "adorei o produto", 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "amei o produto ", 'review_type': 'positive', 'feature_vector': []},
@@ -99,11 +99,11 @@ def analisar(texto):
 
     sentimento = classifier.predict([unclassified_review['feature_vector']])
 
-    print(texto)
+    print(review_text)
     print(sentimento)
     print('==================================================================')
     return sentimento[0]
 
 def executar_analise_sentimento(df):
-    df['sentiment_text'] = df['review_text_normalized'].apply(analisar)
+    df['sentiment_result'] = df.apply(lambda row: analisar(row['review_text'], row['review_text_normalized']), axis=1)
     return df
