@@ -1,18 +1,25 @@
 from pipeline.pipeline_Tokenizacao import tokenize_unique
 from pipeline.pipeline_Stopwords import remover_stopwords
 from pipeline.pipeline_analiseSentimento import analisar  
+from funcoes.preproc import remover_caracteres_especiais
 
 def pesquisarReviews(param: str, conn, cur):
-    # Tokeniza o parâmetro de pesquisa - tarefa 1.9
-    param_tokens = tokenize_unique(param)
-    print(param_tokens)
+
+    # Faz pré-processamento 
+    param_preproc = remover_caracteres_especiais(param)
+    print(param_preproc)
 
     # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
-    param_sem_stopwords = remover_stopwords(param_tokens)
+    param_sem_stopwords = remover_stopwords(param_preproc)
     print(param_sem_stopwords)
 
+    # Tokeniza o parâmetro de pesquisa - tarefa 1.9
+    param_tokens = tokenize_unique(param_sem_stopwords)
+    print(param_tokens)
+
+
     # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
-    sentimento_param = analisar(param_sem_stopwords)
+    sentimento_param = analisar(param_tokens)
     print(sentimento_param) 
 
     # Construa a consulta SQL usando os tokens

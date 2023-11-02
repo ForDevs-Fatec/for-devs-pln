@@ -8,9 +8,11 @@ def remover_caracteres_especiais(texto):
     padrao = re.compile(r'[^a-zA-Z0-ãõÃÕáéíóúâêîôûàèìòùäëïöüçÁÉÍÓÚÂÊÎÔÛÀÈÌÒÙÄËÏÖÜÇ$\s]', re.UNICODE)
     
     # Substitui os caracteres especiais por uma string vazia
-    texto_sem_especiais = re.sub(padrao, ' ', texto)
+    texto_sem_especiais = re.sub(padrao, '', texto)
+
+    texto_sem_especiais = texto_sem_especiais.replace('=', '')
     
-    return texto_sem_especiais
+    return texto_sem_especiais.lower()
 
 def executarPreProcessamento(df_processado, df):
     df_processado["review_text_normalized"] = df["review_text"].apply(remover_caracteres_especiais)
