@@ -1,7 +1,7 @@
 from pipeline.pipeline_Tokenizacao import tokenize_unique
 from pipeline.pipeline_Stopwords import remover_stopwords
 from pipeline.pipeline_analiseSentimento import analisar
-from correcao_ortografica import corrigir_textos
+from funcoes.correcao_ortografica import remover_duplicidade
 from funcoes.preproc import remover_caracteres_especiais
 
 def pesquisarReviews(param: str, conn, cur):
@@ -15,14 +15,13 @@ def pesquisarReviews(param: str, conn, cur):
     print(param_sem_stopwords)
 
     # Correção ortográficas dos parâmetros de pesquisa - tarefa 1.11
-    param_corrigido = corrigir_textos(param_sem_stopwords)
+    param_corrigido = remover_duplicidade(param_sem_stopwords)
     print(param_corrigido)
 
     # Tokeniza o parâmetro de pesquisa - tarefa 1.9
     param_tokens = tokenize_unique(param_sem_stopwords)
     print(param_tokens)
-
-
+    
     # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
     sentimento_param = analisar(param_tokens)
     print(sentimento_param)
