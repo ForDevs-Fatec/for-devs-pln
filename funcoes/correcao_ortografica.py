@@ -4,7 +4,6 @@ def remover_duplicidade(texto):
     texto_sem_duplicidade = texto # Inicializa a nova string com o primeiro caractere
     if len(texto) > 1:
         texto_sem_duplicidade = texto[0]
-        encontrou_duplicidade = False
         quantidade_duplicados_consoantes = 0
         vogais = ['a', 'e', 'i', 'o', 'u']
         # Percorre os caracteres da string
@@ -17,14 +16,6 @@ def remover_duplicidade(texto):
                 if texto[i] not in vogais and quantidade_duplicados_consoantes < 2:
                     texto_sem_duplicidade += texto[i]
                     quantidade_duplicados_consoantes += 1
-                else:
-                    encontrou_duplicidade = True
-                    
-
-        if encontrou_duplicidade == True:
-            print(texto)
-            print(texto_sem_duplicidade)
-            print('========================================')
     return texto_sem_duplicidade
 
 def corrigir(texto):
@@ -41,8 +32,6 @@ def corrigir(texto):
     # Retorna o texto corrigido
     if len(erros) > 0:
         texto_corrigido = tool.correct(texto)
-        print(texto)
-        print(texto_corrigido)
 
     return texto_corrigido
 

@@ -118,15 +118,20 @@ def executarPipeline(conn, cur, url, client):
 
         df_processado = preproc.executarPreProcessamento(df_processado, df)
         tempo_prepro = medir(preproc.executarPreProcessamento, df_processado, df)
+
         df_processado = pipeline_Stopwords.executar_pipeline(df_processado)
         tempo_stopwork = medir(pipeline_Stopwords.executar_pipeline, df_processado)
+
         df_processado = correcao_ortografica.corrigir_textos(df_processado)
         tempo_correcao = medir(correcao_ortografica.corrigir_textos, df_processado)
+
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
         tempo_token = medir(pipeline_Tokenizacao.tokenizar, df_processado)
+
         df_processado = class_tema.class_tema(df_processado)
         #class_tema.class_tema_new(df_processado)
         tempo_classetema = medir(class_tema.class_tema, df_processado)
+        
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
         df_processado.drop('review_text', axis=1)
