@@ -58,13 +58,14 @@ def criarTabelaTempos(conn, cur):
     return True
 
 def removerNulos(df):
+    df.dropna(subset=['review_text'], inplace=True)
+    print(df.head(5))
     df['product_name'] = df['product_name'].fillna('Não informado')
     df['product_brand'] = df['product_brand'].fillna('Não informado')
     df['site_category_lv1'] = df['site_category_lv1'].fillna('Não informado')
     df['site_category_lv2'] = df['site_category_lv2'].fillna('Não informado')
     df['review_title'] = df['review_title'].fillna('Não informado')
     df['recommend_to_a_friend'] = df['recommend_to_a_friend'].fillna('N/A')
-    df['review_text'] = df['review_text'].fillna('Não informado')
     df['reviewer_birth_year'] = df['reviewer_birth_year'].fillna(0)
     df['reviewer_gender'] = df['reviewer_gender'].fillna('0')
     df['reviewer_state'] = df['reviewer_state'].fillna('Não informado')
@@ -111,20 +112,26 @@ def executarPipeline(conn, cur, url, client):
         engine = create_engine('postgresql://' + url.netloc)
         df.to_sql('reviews', engine, if_exists='replace', index=False)
         print('tabela reviews atualizada')
-        #criarTabelaReviewsProcessados(conn, cur)
+        criarTabelaReviewsProcessados(conn, cur)
         df_processado = df[['submission_date', 'reviewer_id', 'review_text']].copy()
         print('tabela clonada')
 
         df_processado = preproc.executarPreProcessamento(df_processado, df)
         tempo_prepro = medir(preproc.executarPreProcessamento, df_processado, df)
+
         df_processado = pipeline_Stopwords.executar_pipeline(df_processado)
         tempo_stopwork = medir(pipeline_Stopwords.executar_pipeline, df_processado)
+
         df_processado = correcao_ortografica.corrigir_textos(df_processado)
         tempo_correcao = medir(correcao_ortografica.corrigir_textos, df_processado)
+
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
         tempo_token = medir(pipeline_Tokenizacao.tokenizar, df_processado)
+
         df_processado = class_tema.class_tema(df_processado)
+        #class_tema.class_tema_new(df_processado)
         tempo_classetema = medir(class_tema.class_tema, df_processado)
+        
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
         df_processado.drop('review_text', axis=1)

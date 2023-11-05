@@ -1,21 +1,31 @@
 from pipeline.pipeline_Tokenizacao import tokenize_unique
 from pipeline.pipeline_Stopwords import remover_stopwords
-from pipeline.pipeline_analiseSentimento import analisar  
+from pipeline.pipeline_analiseSentimento import analisar
+from funcoes.correcao_ortografica import remover_duplicidade
+from funcoes.preproc import remover_caracteres_especiais
 
 def pesquisarReviews(param: str, conn, cur):
-    # Tokeniza o parâmetro de pesquisa - tarefa 1.9
-    param_tokens = tokenize_unique(param)
-    print(param_tokens)
+
+    # Faz pré-processamento 
+    param_preproc = remover_caracteres_especiais(param)
+    print(param_preproc)
 
     # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
-    param_sem_stopwords = remover_stopwords(param_tokens)
+    param_sem_stopwords = remover_stopwords(param_preproc)
     print(param_sem_stopwords)
 
-    # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
-    sentimento_param = analisar(param, param_sem_stopwords)
-    print(sentimento_param) 
+    # Correção ortográficas dos parâmetros de pesquisa - tarefa 1.11
+    param_corrigido = remover_duplicidade(param_sem_stopwords)
+    print(param_corrigido)
 
-    # Construa a consulta SQL usando os tokens
+    # Tokeniza o parâmetro de pesquisa - tarefa 1.9
+    param_tokens = tokenize_unique(param_sem_stopwords)
+    print(param_tokens)
+    
+    # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
+    sentimento_param = analisar(param_tokens)
+    print(sentimento_param)
+
     query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%'"
 
     cur.execute(query)
@@ -37,7 +47,8 @@ def pesquisarReviews(param: str, conn, cur):
             'review_text': row[10],
             'reviewer_birth_year': row[11],
             'reviewer_gender': row[12],
-            'reviewer_state': row[13]
+            'reviewer_state': row[13],
+            'sentimento_param': sentimento_param,  
         }
         resultado.append(newRow)
 
@@ -77,6 +88,7 @@ def getAllProcessados(conn, cur):
             'sentiment_text': row[5]
         }
         resultado.append(newRow)
+    print(resultado)
     return resultado
 
 def getMedia(conn, cur):
