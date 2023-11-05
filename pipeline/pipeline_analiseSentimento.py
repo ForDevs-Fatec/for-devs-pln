@@ -1,9 +1,10 @@
 from textblob import TextBlob
 from sklearn.neural_network import MLPClassifier
+from gensim.models import word2vec
 import numpy as np
 import pandas as pd
 
-def analisar(review_text, texto):
+def analisar(review_text, texto, model_word2vec):
     classified_reviews= [
     {'corpus': "adorei o produto", 'review_type': 'positive', 'feature_vector': []},
     {'corpus': "amei o produto ", 'review_type': 'positive', 'feature_vector': []},
@@ -64,12 +65,13 @@ def analisar(review_text, texto):
                 model_lexicon.append(word)
         model_lexicon.sort()
 
-    def build_feature_vector(words, model_lexicon):
+    def build_feature_vector(words, model_lexicon, model_word2vec):
         bag_of_words_count = np.zeros(len(model_lexicon))
         for pos in range(len(model_lexicon)):
             for word in words:
                 if word == model_lexicon[pos]:
-                    bag_of_words_count[pos] += 1
+                    if word in model_word2vec.wv:
+                        bag_of_words_count[pos] += 1
         return bag_of_words_count
 
 
@@ -82,7 +84,7 @@ def analisar(review_text, texto):
     for classified_review in classified_reviews:
         classified_review['feature_vector'] = build_feature_vector(classified_review['corpus'].split(), base_model_lexicon)
 
-    unclassified_review['feature_vector'] = build_feature_vector(unclassified_review['corpus'].split(), base_model_lexicon)
+    unclassified_review['feature_vector'] = build_feature_vector(unclassified_review['corpus'].split(), base_model_lexicon, model_word2vec)
 
     X = [] # feature vectors
     y = [] # feature classes
@@ -93,17 +95,26 @@ def analisar(review_text, texto):
     classifier = MLPClassifier(solver='lbfgs', alpha=1e-5,
                         hidden_layer_sizes=(5, 3), random_state=1)
 
-
-
     classifier.fit(X, y)
 
     sentimento = classifier.predict([unclassified_review['feature_vector']])
 
     print(review_text)
-    print(sentimento)
+    print(sentimento[0])
     print('==================================================================')
     return sentimento[0]
 
 def executar_analise_sentimento(df):
-    df['sentiment_result'] = df.apply(lambda row: analisar(row['review_text'], row['review_text_normalized']), axis=1)
+
+    feature_size = 5  
+    window_context = 2
+    min_word_count = 1
+    sample = 1e-3
+
+    model_word2vec = word2vec.Word2Vec(df['review_text_normalized'], vector_size=feature_size,
+                                window=window_context, min_count=min_word_count,
+                                sample=sample, epochs=50)
+    
+    df['sentiment_result'] = df.apply(lambda row: analisar(row['review_text'], row['review_text_normalized'], model_word2vec), axis=1)
+    
     return df
