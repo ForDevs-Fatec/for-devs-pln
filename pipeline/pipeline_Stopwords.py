@@ -15,7 +15,7 @@ stop_words_custom = set([
     'eles', 'elas', 'meu', 'seu', 'seu', 'dela', 'nosso', 'vosso', 'vosso', 'deles', 'delas', 'este', 'esse', 'aquele',
     'esta', 'essa', 'aquela', 'aquilo', 'isso', 'isso', 'o', 'que', 'quem', 'como', 'quando', 'onde', 'por', 'que', 'qual',
     'quanto', 'se', 'mas', 'ou', 'é', 'porque', 'pois', 'por', 'isso', 'logo', 'portanto', 'assim', 'então', 'um', 'dois', 'três', 'quatro',
-    'cinco'
+    'cinco', 'estrelas'
 ])
 
 # Link do CSV
