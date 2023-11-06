@@ -3,58 +3,62 @@ from pipeline.pipeline_Stopwords import remover_stopwords
 from pipeline.pipeline_analiseSentimento import analisar
 from funcoes.correcao_ortografica import remover_duplicidade
 from funcoes.preproc import remover_caracteres_especiais
+from funcoes.class_tema import class_tema_new
 
 def pesquisarReviews(param: str, conn, cur):
 
-    # Faz pré-processamento 
-    param_preproc = remover_caracteres_especiais(param)
-    print(param_preproc)
+    try:
+        # Faz pré-processamento 
+        param_preproc = remover_caracteres_especiais(param)
+        print(param_preproc)
 
-    # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
-    param_sem_stopwords = remover_stopwords(param_preproc)
-    print(param_sem_stopwords)
+        # Remove as StopWords do parâmetro de pesquisa - tarefa 1.10
+        param_sem_stopwords = remover_stopwords(param_preproc)
+        print(param_sem_stopwords)
 
-    # Correção ortográficas dos parâmetros de pesquisa - tarefa 1.11
-    param_corrigido = remover_duplicidade(param_sem_stopwords)
-    print(param_corrigido)
+        # Correção ortográficas dos parâmetros de pesquisa - tarefa 1.11
+        param_corrigido = remover_duplicidade(param_sem_stopwords)
+        print(param_corrigido)
 
-    # Tokeniza o parâmetro de pesquisa - tarefa 1.9
-    param_tokens = tokenize_unique(param_sem_stopwords)
-    print(param_tokens)
-    
-    # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
-    sentimento_param = analisar(param_tokens)
-    print(sentimento_param)
+        # Tokeniza o parâmetro de pesquisa - tarefa 1.9
+        param_tokens = tokenize_unique(param_sem_stopwords)
+        print(param_tokens)
 
-    query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%'"
+        classificacao = class_tema_new(param_tokens)
+        print(classificacao)
 
-    cur.execute(query)
-    result = cur.fetchall()
-    resultado = []
-    print(result)
-    for row in result:
-        newRow = {
-            'submission_date': row[0],
-            'reviewer_id': row[1],
-            'product_id': row[2],
-            'product_name': row[3],
-            'product_brand': row[4],
-            'site_category_lv1': row[5],
-            'site_category_lv2': row[6],
-            'review_title': row[7],
-            'overall_rating': row[8],
-            'recommend_to_a_friend': row[9],
-            'review_text': row[10],
-            'reviewer_birth_year': row[11],
-            'reviewer_gender': row[12],
-            'reviewer_state': row[13],
-            'sentimento_param': sentimento_param,  
-        }
-        resultado.append(newRow)
+        # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
+        sentimento_param = analisar(param_tokens)
+        print(sentimento_param)
 
-    print(resultado)
+        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = {classificacao}"
 
-    return resultado
+        cur.execute(query)
+        result = cur.fetchall()
+        resultado = []
+        for row in result:
+            newRow = {
+                'submission_date': row[0],
+                'reviewer_id': row[1],
+                'product_id': row[2],
+                'product_name': row[3],
+                'product_brand': row[4],
+                'site_category_lv1': row[5],
+                'site_category_lv2': row[6],
+                'review_title': row[7],
+                'overall_rating': row[8],
+                'recommend_to_a_friend': row[9],
+                'review_text': row[10],
+                'reviewer_birth_year': row[11],
+                'reviewer_gender': row[12],
+                'reviewer_state': row[13],
+                'sentimento_param': sentimento_param,  
+            }
+            resultado.append(newRow)
+
+        return resultado
+    except Exception as e:
+        print(e)
 
 def getAll(conn, cur):
     query = "SELECT submission_date, reviewer_id, site_category_lv1, overall_rating, reviewer_birth_year, reviewer_gender, reviewer_gender, reviewer_state FROM reviews LIMIT 10000"
