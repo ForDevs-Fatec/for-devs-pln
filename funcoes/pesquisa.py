@@ -31,7 +31,7 @@ def pesquisarReviews(param: str, conn, cur):
         sentimento_param = analisar(param_tokens)
         print(sentimento_param)
 
-        query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%' AND classificacao_tema = {classificacao}"
+        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = {classificacao}"
 
         cur.execute(query)
         result = cur.fetchall()
