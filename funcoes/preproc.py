@@ -5,7 +5,7 @@ from language_tool_python import LanguageTool
 def remover_caracteres_especiais(texto):
 
     # Define a expressão regular para encontrar caracteres especiais
-    padrao = re.compile(r'[^a-zA-Z0-ãõÃÕáéíóúâêîôûàèìòùäëïöüçÁÉÍÓÚÂÊÎÔÛÀÈÌÒÙÄËÏÖÜÇ$\s]', re.UNICODE)
+    padrao = re.compile(r'[^a-zA-ZãõÃÕáéíóúâêîôûàèìòùäëïöüçÁÉÍÓÚÂÊÎÔÛÀÈÌÒÙÄËÏÖÜÇ$\s]', re.UNICODE)
     
     # Substitui os caracteres especiais por uma string vazia
     texto_sem_especiais = re.sub(padrao, '', texto)

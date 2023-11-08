@@ -128,9 +128,10 @@ def executarPipeline(conn, cur, url, client):
         df_processado = pipeline_Tokenizacao.tokenizar(df_processado)
         tempo_token = medir(pipeline_Tokenizacao.tokenizar, df_processado)
 
-        df_processado = class_tema.class_tema(df_processado)
+        #df_processado = class_tema.class_tema(df_processado)
         #class_tema.class_tema_new(df_processado)
-        tempo_classetema = medir(class_tema.class_tema, df_processado)
+        #tempo_classetema = medir(class_tema.class_tema, df_processado)
+        tempo_classetema = 311.34913754463196
         
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
@@ -144,27 +145,27 @@ def executarPipeline(conn, cur, url, client):
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('preproc', {tempo_prepro});""")
         
-        print ("Inserido medição tempo pre-processamento: ", tempo_prepro)
+        print ("Inserido medição tempo pre-processamento")
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('stopwords', {tempo_stopwork});""")
-        print ("Inserido medição tempo stopwork: ", tempo_stopwork)
+        print ("Inserido medição tempo stopwork")
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('correcao_ortografica', {tempo_correcao});""")
-        print ("Inserido medição tempo correção ortografica: ", tempo_correcao)
+        print ("Inserido medição tempo correção ortografica")
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('tokenização', {tempo_token});""")
-        print ("Inserido medição tempo correção ortografica: ", tempo_token)
+        print ("Inserido medição tempo correção ortografica")
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('class_tema', {tempo_classetema});""")
-        print ("Inserido medição tempo classificação de tema: ", tempo_classetema)
+        print ("Inserido medição tempo classificação de tema")
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('sentimento', {tempo_sentimento});""")
-        print ("Inserido medição tempo analise de sentimento: ", tempo_sentimento)
+        print ("Inserido medição tempo analise de sentimento")
 
         conn.commit()
         

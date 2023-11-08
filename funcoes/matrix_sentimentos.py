@@ -24,14 +24,14 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 def getAllProcessados(conn, cur):
-    query = "SELECT reviewer_id, sentiment_text FROM reviews_processados"
+    query = "SELECT * FROM reviews_processados"
     cur.execute(query)
     result = cur.fetchall()
     resultado = []
     for row in result:
         newRow = {
-            'reviewer_id': row[0],
-            'sentiment_text': row[1]
+            'reviewer_id': row[1],
+            'sentiment_text': row[5]
         }
         resultado.append(newRow)
     return resultado
@@ -71,40 +71,38 @@ def dataframe():
 
 def calcular_matriz_confusao(df):
     
-    rating_mapping = {5: 'positivo', 4: 'positivo', 3: 'neutro', 2: 'negativo', 1: 'negativo'}
+    rating_mapping = {5: 'positive', 4: 'positive', 3: 'neutral', 2: 'negative', 1: 'negative'}
     df['overall_rating'] = df['overall_rating'].map(rating_mapping)
 
     print (df)
     
     # Calculando a matriz de confusão
-    confusion = confusion_matrix(df['sentiment_text'], df['overall_rating'])
+    matriz_confusao = confusion_matrix(df['overall_rating'].values, df['sentiment_text'].values)
 
-    matriz_confusao = np.array(confusion)
-
-    valores_diferentes_de_zero = matriz_confusao[matriz_confusao != 0]
+    print(matriz_confusao)
 
     # Calculando a acurácia
-    accuracy = (valores_diferentes_de_zero[0]+valores_diferentes_de_zero[4]+valores_diferentes_de_zero[8])/10000
+    accuracy = (matriz_confusao[0,0]+matriz_confusao[1,1]+matriz_confusao[2,2])/10000
 
     # Calculando a precisão para a classe positiva
-    precision_positivo = (valores_diferentes_de_zero[0])/(valores_diferentes_de_zero[0]+valores_diferentes_de_zero[3]+valores_diferentes_de_zero[6])
+    precision_positivo = (matriz_confusao[0,0])/(matriz_confusao[0,0]+matriz_confusao[1,0]+matriz_confusao[2,0])
 
-    precision_negativo = (valores_diferentes_de_zero[8])/(valores_diferentes_de_zero[8]+valores_diferentes_de_zero[5]+valores_diferentes_de_zero[2])
+    precision_negativo = (matriz_confusao[0,2])/(matriz_confusao[0,2]+matriz_confusao[1,2]+matriz_confusao[2,2])
 
     
-    return valores_diferentes_de_zero, accuracy, precision_positivo, precision_negativo
+    return matriz_confusao, accuracy, precision_positivo, precision_negativo
 
 df = pd.DataFrame(dataframe())
 
-valores_diferentes_de_zero, accuracy, precision_positivo, precision_negativo = calcular_matriz_confusao(df)
+matriz_confusao, accuracy, precision_positivo, precision_negativo = calcular_matriz_confusao(df)
 
 print("\n \n")
 print("Matriz de Confusão:")
 
 print("        Positivo |   Neutro |  Negativo ")
-print("Positivo   ", valores_diferentes_de_zero[0],"|     ", valores_diferentes_de_zero[1],"|    ", valores_diferentes_de_zero[2]) 
-print("Neutro       ", valores_diferentes_de_zero[3],"|      ", valores_diferentes_de_zero[4],"|    ", valores_diferentes_de_zero[5])
-print("Negativo   ", valores_diferentes_de_zero[6],"|     ", valores_diferentes_de_zero[7],"|    ", valores_diferentes_de_zero[8])
+print("Positivo   ", matriz_confusao[0,0],"|       ", matriz_confusao[0,1],"|    ", matriz_confusao[0,2]) 
+print("Neutro      ", matriz_confusao[1,0],"|       ", matriz_confusao[1,1],"|    ", matriz_confusao[1,2])
+print("Negativo   ", matriz_confusao[2,0],"|       ", matriz_confusao[2,1],"|    ", matriz_confusao[2,2])
 
 print("\n \n")
 print("Acurácia:", accuracy*100, " %" )
