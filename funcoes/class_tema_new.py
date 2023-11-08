@@ -47,7 +47,6 @@ def class_tema_new(palavra):
                                     window=window_context, min_count= min_word_count,
                                     sample=sample, epochs = 50)
 
-    print("\n \n")
     word_embedding = [] 
     sentence_vector = 0
     for word in palavra.split():
@@ -62,12 +61,13 @@ def class_tema_new(palavra):
     produto_similarity = dot(sentence_vector, w2vec_model_produto.wv["produto"])
     expectativas_similarity = dot(sentence_vector, w2vec_model_expectativa.wv["expectativas"])
     prazo_similarity = dot(sentence_vector, w2vec_model_prazo.wv["prazo"])
+    print("passou aqui")
 
-    if produto_similarity > expectativas_similarity and produto_similarity > prazo_similarity:
+    if len(word_embedding) > 0 and produto_similarity > expectativas_similarity and produto_similarity > prazo_similarity:
         print('==================================================================')
         print("produto")
         return 1
-    elif expectativas_similarity > produto_similarity and expectativas_similarity > prazo_similarity:
+    elif len(word_embedding) > 0 and expectativas_similarity > produto_similarity and expectativas_similarity > prazo_similarity:
         print('==================================================================')
         print("expectativas")
         return 2

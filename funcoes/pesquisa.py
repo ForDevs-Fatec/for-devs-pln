@@ -18,20 +18,18 @@ def pesquisarReviews(param: str, conn, cur):
 
         # Correção ortográficas dos parâmetros de pesquisa - tarefa 1.11
         param_corrigido = remover_duplicidade(param_sem_stopwords)
-        print(param_corrigido)
 
         # Tokeniza o parâmetro de pesquisa - tarefa 1.9
         param_tokens = tokenize_unique(param_sem_stopwords)
-        print(param_tokens)
 
         classificacao = class_tema_new(param_tokens)
         print(classificacao)
 
         # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
-        sentimento_param = analisar(param_tokens)
-        print(sentimento_param)
+        # sentimento_param = analisar(param_tokens)
+        # print(sentimento_param)
 
-        query = f"SELECT * FROM reviews WHERE r.review_text LIKE '%{param}%'"
+        query = f"SELECT * FROM reviews WHERE review_text LIKE '%{param}%'"
 
         cur.execute(query)
         result = cur.fetchall()
@@ -51,8 +49,7 @@ def pesquisarReviews(param: str, conn, cur):
                 'review_text': row[10],
                 'reviewer_birth_year': row[11],
                 'reviewer_gender': row[12],
-                'reviewer_state': row[13],
-                'sentimento_param': sentimento_param,  
+                'reviewer_state': row[13]
             }
             resultado.append(newRow)
 
