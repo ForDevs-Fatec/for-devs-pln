@@ -7,6 +7,10 @@ from numpy import dot
 from numpy.linalg import norm
 from numpy import average
 from gensim.models import word2vec
+from funcoes.correcao_ortografica import remover_duplicidade
+from funcoes.preproc import remover_caracteres_especiais
+from pipeline.pipeline_Tokenizacao import tokenize_unique
+from pipeline.pipeline_Stopwords import remover_stopwords
 
 csv_url = 'https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/master/B2W-Reviews01.csv'
 df = pd.read_csv(csv_url)
@@ -91,19 +95,18 @@ def analisar(review_text, texto, w2vec_model):
         {'corpus': "Até hoje não recebi o produto e nem o dinheiro, não recomendo essa americanas para ninguém", 'review_type': 'negative', 'feature_vector': [-0.00190271,  0.0094188,   0.03217983, -0.06665723, -0.07436707]},
         {'corpus': "produto não é bom", 'review_type': 'negative', 'feature_vector': [0.02802305,  0.10602981,  0.12126648, -0.08163466, -0.03711553]},
 
-        {'corpus': "muito simples pelo preço, isso que da compra espontaneamente", 'review_type': 'neutral', 'feature_vector': [0.03430578,  0.032687,    0.0403705,  -0.01818323, -0.0323541]},
-        {'corpus': "Bom . Conforme combinado. chegou antes do prazo. Tudo certo.", 'review_type': 'neutral', 'feature_vector': [0.00902728, -0.00630609, -0.00864388, -0.02090178, -0.01329581]},
-        {'corpus': "O aparelho é bom, vale o custo beneficio, no entanto a câmera frontal tem baixa qualidade.", 'review_type': 'neutral', 'feature_vector': [0.02708118, -0.03567303,  0.05857635,  0.08855911,  0.00200178 ]},
-        {'corpus': "estou satisfeito com o produto bom e barato o meu não o entrou aguá", 'review_type': 'neutral', 'feature_vector': [-0.00066112, -0.00274017,  0.03489415, -0.01236685,  0.01852863]},
-        {'corpus': "A qualidade do produto é equivalente ao preço, ou seja, é bom para o valor cobrado.", 'review_type': 'neutral', 'feature_vector': [-0.00242339,  0.09500432,  0.0429258,   0.02415989,  0.01505293]},
-        {'corpus': "Nao gostei do material do produto. O tamanho é ótimo chegou muito rápido do não gostei do material", 'review_type': 'neutral', 'feature_vector': [-0.02762635, -0.05266787,  0.03693885, -0.01872506,  0.03050968]}
-    ]
+        {'corpus': "muito simples pelo preço, isso que da compra espontaneamente", 'review_type': 'negative', 'feature_vector': [0.03430578,  0.032687,    0.0403705,  -0.01818323, -0.0323541]},
+        {'corpus': "Bom . Conforme combinado. chegou antes do prazo. Tudo certo.", 'review_type': 'positive', 'feature_vector': [0.00902728, -0.00630609, -0.00864388, -0.02090178, -0.01329581]},
+        {'corpus': "estou satisfeito com o produto bom e barato o meu não o entrou aguá", 'review_type': 'positive', 'feature_vector': [-0.00066112, -0.00274017,  0.03489415, -0.01236685,  0.01852863]},
+        {'corpus': "A qualidade do produto é equivalente ao preço, ou seja, é bom para o valor cobrado.", 'review_type': 'positive', 'feature_vector': [-0.00242339,  0.09500432,  0.0429258,   0.02415989,  0.01505293]},
+        {'corpus': "Nao gostei do material do produto. O tamanho é ótimo chegou muito rápido do não gostei do material", 'review_type': 'negative', 'feature_vector': [-0.02762635, -0.05266787,  0.03693885, -0.01872506,  0.03050968]}
 
+    ]
 
     documento = word_tokenize(texto)
     word_embedding = [] 
     for word in documento:
-        if word in w2vec_model:
+        if word in w2vec_model.wv:
             word_embedding.append(w2vec_model.wv[word])
  
     word_embedding = np.array(word_embedding)

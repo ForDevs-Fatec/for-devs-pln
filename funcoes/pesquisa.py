@@ -3,7 +3,7 @@ from pipeline.pipeline_Stopwords import remover_stopwords
 from pipeline.pipeline_analiseSentimento import analisar
 from funcoes.correcao_ortografica import remover_duplicidade
 from funcoes.preproc import remover_caracteres_especiais
-from funcoes.class_tema import class_tema_new
+from funcoes.class_tema_new import class_tema_new
 
 def pesquisarReviews(param: str, conn, cur):
 
@@ -31,7 +31,7 @@ def pesquisarReviews(param: str, conn, cur):
         sentimento_param = analisar(param_tokens)
         print(sentimento_param)
 
-        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = {classificacao}"
+        query = f"SELECT * FROM reviews WHERE r.review_text LIKE '%{param}%'"
 
         cur.execute(query)
         result = cur.fetchall()
