@@ -31,7 +31,7 @@ def pesquisarReviews(param: str, conn, cur):
         sentimento_param = analisar(param_tokens)
         print(sentimento_param)
 
-        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = {classificacao}"
+        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_result = '{sentimento_param}' AND rp.classificacao_tema = {classificacao}"
 
         cur.execute(query)
         result = cur.fetchall()
@@ -196,7 +196,7 @@ def getClassificacaoTemaTempo(conn, cur):
     return resultado
 
 def getClassificacaoTemaSentimento(conn, cur):
-    query = "SELECT classificacao_tema, sentiment_text, COUNT(*) as contagem FROM reviews_processados GROUP BY classificacao_tema, sentiment_text LIMIT 10000"
+    query = "SELECT classificacao_tema, sentiment_result, COUNT(*) as contagem FROM reviews_processados GROUP BY classificacao_tema, sentiment_result LIMIT 10000"
     cur.execute(query)
     result = cur.fetchall()   
 
@@ -213,7 +213,7 @@ def getClassificacaoTemaSentimento(conn, cur):
     return resultado
 
 def getClassificacaoTemaSentimentoEstado(conn, cur):
-    query = 'SELECT r.reviewer_state, rp.classificacao_tema, rp.sentiment_text, COUNT (*) as contagem  FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id GROUP BY rp.classificacao_tema, rp.sentiment_text, r.reviewer_state LIMIT 10000;'
+    query = 'SELECT r.reviewer_state, rp.classificacao_tema, rp.sentiment_result, COUNT (*) as contagem  FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id GROUP BY rp.classificacao_tema, rp.sentiment_result, r.reviewer_state LIMIT 10000;'
     cur.execute(query)
     result = cur.fetchall()   
 
@@ -231,7 +231,7 @@ def getClassificacaoTemaSentimentoEstado(conn, cur):
     return resultado
 
 def getDistribuicaoSentimentosFaixaEtariaTema(conn, cur):
-    query = 'SELECT r.reviewer_birth_year, rp.classificacao_tema, rp.sentiment_text, COUNT (*) as contagem FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id GROUP BY r.reviewer_birth_year, rp.classificacao_tema, rp.sentiment_text LIMIT 10000;'
+    query = 'SELECT r.reviewer_birth_year, rp.classificacao_tema, rp.sentiment_result, COUNT (*) as contagem FROM reviews r JOIN reviews_processados rp ON r.reviewer_id = rp.reviewer_id GROUP BY r.reviewer_birth_year, rp.classificacao_tema, rp.sentiment_result LIMIT 10000;'
     cur.execute(query)
     result = cur.fetchall()
 

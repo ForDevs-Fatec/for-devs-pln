@@ -16,7 +16,7 @@ app = FastAPI()
 load_dotenv()
 
 up.uses_netloc.append("postgres")
-url = up.urlparse(os.getenv('DB_URL'))
+url = up.urlparse(os.getenv('DB_URL_RESERVA'))
 
 conn = psycopg2.connect(
             database=url.path[1:],
@@ -125,8 +125,8 @@ def getClassificacaoTemaTempo():
 def getClassificacaoTemaSentimento():
     try:
         return pesquisa.getClassificacaoTemaSentimento(conn=conn, cur=cur)
-    except:
-        return {"erro": "erro ao buscar dados"}
+    except Exception as e:
+        return {"erro": f"erro ao buscar dados {e}"}
 
 @app.get("/getClassificacaoTemaSentimentoEstado")
 def getClassificacaoTemaSentimentoEstado():
