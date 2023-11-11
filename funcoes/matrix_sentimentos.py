@@ -99,19 +99,19 @@ matriz_confusao, accuracy, precision_positivo, precision_negativo = calcular_mat
 print("\n \n")
 print("Matriz de Confusão:")
 
-print("        Positivo |   Neutro |  Negativo ")
-print("Positivo   ", matriz_confusao[0,0],"|       ", matriz_confusao[0,1],"|    ", matriz_confusao[0,2]) 
+print("        Negativo |   Neutro |  Positivo ")
+print("Negativo   ", matriz_confusao[0,0],"|       ", matriz_confusao[0,1],"|    ", matriz_confusao[0,2]) 
 print("Neutro      ", matriz_confusao[1,0],"|       ", matriz_confusao[1,1],"|    ", matriz_confusao[1,2])
-print("Negativo   ", matriz_confusao[2,0],"|       ", matriz_confusao[2,1],"|    ", matriz_confusao[2,2])
+print("Positivo   ", matriz_confusao[2,0],"|       ", matriz_confusao[2,1],"|    ", matriz_confusao[2,2])
 
 print("\n \n")
 print("Acurácia:", accuracy*100, " %" )
 
 print("\n \n")
-print("Precisão (Positivo):", precision_positivo*100, " %")
+print("Precisão (Positivo):", precision_negativo*100, " %")
+print("\n \n")
+print("Precisão (Negativo):", precision_positivo*100, " %")
 print("\n \n")
 
-print("Precisão (Negativo):", precision_negativo*100, " %")
-print("\n \n")
 
 
