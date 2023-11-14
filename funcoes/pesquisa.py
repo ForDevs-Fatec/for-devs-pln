@@ -1,3 +1,4 @@
+from datetime import date # quando se quer apenas 1 dos submódulos
 from pipeline.pipeline_Tokenizacao import tokenize_unique
 from pipeline.pipeline_Stopwords import remover_stopwords
 from pipeline.pipeline_analiseSentimento import analisar
@@ -159,6 +160,7 @@ def getCategoriasPorTema(conn, cur):
             'frequencia': row[2]
         }
         resultado.append(newRow)
+        
     return resultado
 
 def getClassificacaoTemaEContagem(conn, cur):
@@ -236,10 +238,10 @@ def getDistribuicaoSentimentosFaixaEtariaTema(conn, cur):
     result = cur.fetchall()
 
     resultado = []
-
+    
     for row in result:
         newRow = {
-            'reviewer_birth_year': row[0],
+            'reviewer_birth_year': int(row[0]),
             'classificacao_tema': row[1],
             'sentimento_text': row[2],
             'quantidade': row[3],
@@ -258,7 +260,7 @@ def getMedicoes(conn, cur):
     for row in result:
         newRow = {
             'função': row[0],
-            'tempo': row[1]
+            'tempo': round(row[1], 2),
         }
         resultado.append(newRow)
 

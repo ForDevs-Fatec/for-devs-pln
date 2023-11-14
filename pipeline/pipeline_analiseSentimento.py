@@ -141,5 +141,5 @@ def analisar(review_text, texto, w2vec_model):
 
 def executar_analise_sentimento(df):
 
-    df['sentiment_result'] = df.apply(lambda row: analisar(row['review_text'], row['review_text_normalized'], w2vec_model), axis=1)
+    df['sentiment_text'] = df.apply(lambda row: analisar(row['review_text'], row['review_text_normalized'], w2vec_model), axis=1)
     return df

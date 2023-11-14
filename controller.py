@@ -16,7 +16,7 @@ app = FastAPI()
 load_dotenv()
 
 up.uses_netloc.append("postgres")
-url = up.urlparse(os.getenv('DB_URL_RESERVA'))
+url = up.urlparse(os.getenv('DB_URL'))
 
 conn = psycopg2.connect(
             database=url.path[1:],
@@ -107,28 +107,28 @@ def getAllProcessados():
     except:
         return {"erro": "erro ao buscar dados"}
     
-@app.get("/getClassificacaoTemaEContagem")
+@app.get("/getTemaCont")
 def getClassificacaoTemaEContagem():
     try:
         return pesquisa.getClassificacaoTemaEContagem(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
     
-@app.get("/getClassificacaoTemaTempo")
+@app.get("/getTemaTempo")
 def getClassificacaoTemaTempo():
     try:
         return pesquisa.getClassificacaoTemaTempo(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
     
-@app.get("/getClassificacaoTemaSentimento")
+@app.get("/getTemaSent")
 def getClassificacaoTemaSentimento():
     try:
         return pesquisa.getClassificacaoTemaSentimento(conn=conn, cur=cur)
     except Exception as e:
         return {"erro": f"erro ao buscar dados {e}"}
 
-@app.get("/getClassificacaoTemaSentimentoEstado")
+@app.get("/getTemaSentUF")
 def getClassificacaoTemaSentimentoEstado():
     try:
         return pesquisa.getClassificacaoTemaSentimentoEstado(conn=conn, cur=cur)
@@ -149,7 +149,7 @@ def getCategoriaTemas():
     except:
         return {"erro": "erro ao buscar dados"}
     
-@app.get("/getDistribuicaoSentimentosFaixaEtariaTema")
+@app.get("/getSentIdade")
 def getDistribuicaoSentimentosFaixaEtariaTema():
     try:
         return pesquisa.getDistribuicaoSentimentosFaixaEtariaTema(conn=conn, cur=cur)
