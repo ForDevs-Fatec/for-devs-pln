@@ -5,6 +5,7 @@ nltk.download('punkt')
 def tokenize_unique(text):
     tokens = word_tokenize(text)
     unique_tokens = list(set(tokens))  # Converte para conjunto para remover duplicatas
+    print (unique_tokens)
     return ' '.join(unique_tokens)  # Retorna uma string única
 
 def tokenizar(df):
