@@ -16,7 +16,7 @@ app = FastAPI()
 load_dotenv()
 
 up.uses_netloc.append("postgres")
-url = up.urlparse(os.getenv('DB_URL'))
+url = up.urlparse(os.getenv('DB_URL_RESERVA'))
 
 conn = psycopg2.connect(
             database=url.path[1:],
