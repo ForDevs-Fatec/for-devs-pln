@@ -4,15 +4,13 @@ from dotenv import load_dotenv
 import urllib.parse as up
 import psycopg2
 import os
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 
 
 load_dotenv()
 
 up.uses_netloc.append("postgres")
-url = up.urlparse(os.getenv('DB_URL'))
+url = up.urlparse(os.getenv('DB_URL_RESERVA'))
 conn = psycopg2.connect(
     database=url.path[1:],
     password = url.password,
@@ -31,43 +29,21 @@ def getAllProcessados(conn, cur):
     for row in result:
         newRow = {
             'reviewer_id': row[1],
-            'sentiment_text': row[5]
+            'overall_rating': row[3],
+            'sentiment_text': row[6]
         }
         resultado.append(newRow)
     return resultado
-
-def csv():
-    df = pd.read_csv('https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/main/B2W-Reviews01.csv')
-
-    # Filtrar os comentários com 'review_text' não vazia ou NaN
-    filtered_df = df.dropna(subset=['review_text'])
-    filtered_df = filtered_df[filtered_df['review_text'].str.strip() != '']
-
-    recent_comments = filtered_df
-
-    df_pre = recent_comments[['reviewer_id','review_text', 'overall_rating' ]]
-
-    df_pre = pd.DataFrame(df_pre)
-
-    return df_pre
 
 def dataframe():
 
     processado = getAllProcessados(conn=conn, cur=cur)
 
-    comentarios = csv()
-
     df_processado = pd.DataFrame(processado)
 
-    df_comentarios = pd.DataFrame(comentarios)
+    print (df_processado)
 
-    df = pd.merge(df_comentarios, df_processado, on='reviewer_id')
-
-    df = pd.DataFrame(df.head(10000))
-
-    print (df)
-
-    return df
+    return df_processado
 
 def calcular_matriz_confusao(df):
     
@@ -87,14 +63,16 @@ def calcular_matriz_confusao(df):
     # Calculando a precisão para a classe positiva
     precision_positivo = (matriz_confusao[0,0])/(matriz_confusao[0,0]+matriz_confusao[1,0]+matriz_confusao[2,0])
 
-    precision_negativo = (matriz_confusao[0,2])/(matriz_confusao[0,2]+matriz_confusao[1,2]+matriz_confusao[2,2])
+    precision_neutro = (matriz_confusao[1,1])/(matriz_confusao[0,1]+matriz_confusao[1,1]+matriz_confusao[1,2])
+
+    precision_negativo = (matriz_confusao[2,2])/(matriz_confusao[0,2]+matriz_confusao[1,2]+matriz_confusao[2,2])
 
     
-    return matriz_confusao, accuracy, precision_positivo, precision_negativo
+    return matriz_confusao, accuracy, precision_positivo, precision_negativo, precision_neutro
 
 df = pd.DataFrame(dataframe())
 
-matriz_confusao, accuracy, precision_positivo, precision_negativo = calcular_matriz_confusao(df)
+matriz_confusao, accuracy, precision_positivo, precision_negativo, precision_neutro = calcular_matriz_confusao(df)
 
 print("\n \n")
 print("Matriz de Confusão:")
@@ -109,6 +87,9 @@ print("Acurácia:", accuracy*100, " %" )
 
 print("\n \n")
 print("Precisão (Positivo):", precision_positivo*100, " %")
+print("\n \n")
+
+print("Precisão (Neutro):", precision_neutro*100, " %")
 print("\n \n")
 
 print("Precisão (Negativo):", precision_negativo*100, " %")

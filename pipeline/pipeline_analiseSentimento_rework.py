@@ -3,6 +3,7 @@ from nltk.tokenize import word_tokenize
 from sklearn.neural_network import MLPClassifier
 import numpy as np
 from numpy import average
+import time
 
 def classificar_reviews_treinamento(reviews, classificacao, classified_reviews, model, feature_size):
     for review in reviews:
@@ -54,6 +55,8 @@ def classificar_review_predicao(review, model, feature_size, classificador):
 
 def executar_analise_sentimento(df):
 
+    inicio = time.time()
+
     feature_size = 5  # size of vector representation
     window_context = 2
     min_word_count = 1
@@ -86,4 +89,8 @@ def executar_analise_sentimento(df):
     print(df.head(5))
     df['sentiment_text'] = df.apply(lambda row: classificar_review_predicao(word_tokenize(row['review_text_normalized']), w2vec_model, feature_size, classifier), axis=1)
 
-    return df
+    tempo_sentimento = time.time() - inicio
+
+    print('PASSOU AQUI')
+    
+    return df, tempo_sentimento

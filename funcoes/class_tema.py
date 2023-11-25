@@ -11,9 +11,12 @@ from nltk.tokenize import word_tokenize
 import re
 import numpy as np
 from numpy import average
+import time
 
 #data = documento tokenizado 
 def class_tema(df):
+    inicio = time.time()
+
     tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
     df
     max_dist = 90.
@@ -25,7 +28,10 @@ def class_tema(df):
     Z = linkage(similarity_matrix, 'ward')
     cluster_labels = fcluster(Z, max_dist, criterion='distance')
     df['classificacao_tema'] = cluster_labels
-    return df
+
+    tempo = time.time() - inicio
+
+    return df, tempo
 
 def class_tema_new(palavra):
 
