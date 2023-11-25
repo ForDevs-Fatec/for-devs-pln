@@ -14,4 +14,5 @@ def remover_stopwords(texto):
 
 def executar_pipeline(df):
     df['review_text_normalized'] =  df['review_text_normalized'].apply(remover_stopwords)
+    print (df['review_text_normalized'])
     return df

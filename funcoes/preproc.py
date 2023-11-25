@@ -16,4 +16,5 @@ def remover_caracteres_especiais(texto):
 
 def executarPreProcessamento(df_processado, df):
     df_processado["review_text_normalized"] = df["review_text"].apply(remover_caracteres_especiais)
+    print (df_processado["review_text_normalized"])
     return df_processado

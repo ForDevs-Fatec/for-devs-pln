@@ -12,7 +12,6 @@ import re
 import numpy as np
 from numpy import average
 
-#data = documento tokenizado 
 def class_tema(df):
     tfidf_vectorized = TfidfVectorizer(min_df=0., max_df=1., norm='l2', use_idf=True)
     df
