@@ -7,7 +7,7 @@ import time
 def tokenize_unique(text):
     tokens = word_tokenize(text)
     unique_tokens = list(set(tokens))
-    return unique_tokens # retorna uma lista de tokens únicos - 1.14 [PLN]
+    return ' '.join(unique_tokens) # retorna uma lista de tokens únicos - 1.14 [PLN]
 
 def tokenizar(df):
     inicio = time.time()
