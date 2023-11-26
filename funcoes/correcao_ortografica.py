@@ -1,4 +1,5 @@
 from language_tool_python import LanguageTool
+import time
 
 def remover_duplicidade(texto):
     texto_sem_duplicidade = texto # Inicializa a nova string com o primeiro caractere
@@ -36,6 +37,8 @@ def corrigir(texto):
     return texto_corrigido
 
 def corrigir_textos(df):
+    inicio = time.time()
     df['review_text_normalized'] = df['review_text_normalized'].apply(remover_duplicidade)
     #df['review_text_normalized'] = df['review_text_normalized'].apply(corrigir)
-    return df
+    tempo = time.time() - inicio
+    return df, tempo

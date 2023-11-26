@@ -1,5 +1,6 @@
 import nltk
 nltk.download('stopwords')
+import time
 
 # lista personalizada de stopwords
 stop_words_custom = set([
@@ -34,8 +35,10 @@ def remover_stopwords(texto):
     return ' '.join(palavras_sem_stopwords)
 
 def executar_pipeline(df):
+    inicio = time.time()
     df['review_text_normalized'] =  df['review_text_normalized'].apply(remover_stopwords)
-    return df
+    tempo = time.time() - inicio
+    return df, tempo
 
 # Aplicar a remoção das stops
 # for coluna in colunas_texto:
