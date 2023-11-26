@@ -4,6 +4,7 @@ from spellchecker import SpellChecker
 portuguese = SpellChecker(language='pt')
 
 def remover_duplicidade_e_corrigir(texto):
+
     texto_sem_duplicidade = texto[0]
     quantidade_duplicados_consoantes = 0
     vogais = ['a', 'e', 'i', 'o', 'u']
@@ -30,4 +31,6 @@ def corrigir_palavra(word):
 
 def corrigir_textos(df):
     df['review_text_normalized'] = df['review_text_normalized'].apply(remover_duplicidade_e_corrigir)
+    print (df['review_text_normalized'])
+    print ('correção')
     return df

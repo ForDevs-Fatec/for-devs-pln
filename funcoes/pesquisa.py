@@ -1,8 +1,8 @@
 from datetime import date # quando se quer apenas 1 dos submódulos
 from pipeline.pipeline_Tokenizacao import tokenize_unique
-from pipeline.pipeline_Stopwords import remover_stopwords
+from pipeline.pipeline_Stopwords import remover_stopwords_formatar
 from pipeline.pipeline_analiseSentimento import analisar
-from funcoes.correcao_ortografica import remover_duplicidade
+from funcoes.correcao_ortografica import remover_duplicidade_e_corrigir
 from funcoes.preproc import remover_caracteres_especiais
 from funcoes.class_tema import class_tema_new
 
@@ -88,8 +88,8 @@ def getAllProcessados(conn, cur):
         newRow = {
             'submission_date': row[0],
             'reviewer_id': row[1],
-            'review_text_normalized': row[4],
-            'classificacao_tema': row[3],
+            'review_text_normalized': row[3],
+            'classificacao_tema': row[4],
             'sentiment_text': row[5]
         }
         resultado.append(newRow)

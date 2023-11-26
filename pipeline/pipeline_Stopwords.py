@@ -2,7 +2,6 @@ import nltk
 from nltk.corpus import stopwords
 
 nltk.download('stopwords')
-# lista de stopwords
 stop_words = set(stopwords.words('portuguese'))
 stop_words.remove('não')
 
@@ -13,5 +12,7 @@ def remover_stopwords_formatar(texto):
     return f"[{', '.join(palavras_sem_stopwords)}]"
 
 def executar_pipeline(df):
-    df['review_text_normalized'] = df['review_text'].apply(remover_stopwords_formatar)
+    df['review_text_normalized'] = df['review_text_normalized'].apply(remover_stopwords_formatar)
+    print (df['review_text_normalized'])
+    print ('stopwords')
     return df
