@@ -88,8 +88,8 @@ def getAllProcessados(conn, cur):
         newRow = {
             'submission_date': row[0],
             'reviewer_id': row[1],
-            'review_text_normalized': row[3],
-            'classificacao_tema': row[4],
+            'review_text_normalized': row[4],
+            'classificacao_tema': row[3],
             'sentiment_text': row[5]
         }
         resultado.append(newRow)
