@@ -1,7 +1,9 @@
 from language_tool_python import LanguageTool
 from spellchecker import SpellChecker
 
-def remover_duplicidade(texto):
+portuguese = SpellChecker(language='pt')
+
+def remover_duplicidade_e_corrigir(texto):
     texto_sem_duplicidade = texto[0]
     quantidade_duplicados_consoantes = 0
     vogais = ['a', 'e', 'i', 'o', 'u']
@@ -14,17 +16,18 @@ def remover_duplicidade(texto):
             if texto[i] not in vogais:
                 quantidade_duplicados_consoantes += 1
                 if quantidade_duplicados_consoantes < 2:
-                    texto_sem_duplicidade += texto[i]
+                    # Verifica se a palavra corrigida existe antes de adicionar
+                    palavra_corrigida = corrigir_palavra(texto[i])
+                    if palavra_corrigida:
+                        texto_sem_duplicidade += palavra_corrigida
             else:
                 texto_sem_duplicidade += texto[i]
 
     return texto_sem_duplicidade
 
 def corrigir_palavra(word):
-    portuguese = SpellChecker(language='pt')
     return portuguese.correction(word)
 
 def corrigir_textos(df):
-    df['review_text_normalized'] = df['review_text_normalized'].apply(lambda x: [remover_duplicidade(word) for word in x])
-    df['review_text_normalized'] = df['review_text_normalized'].apply(lambda x: [corrigir_palavra(word) for word in x])
+    df['review_text_normalized'] = df['review_text_normalized'].apply(remover_duplicidade_e_corrigir)
     return df
