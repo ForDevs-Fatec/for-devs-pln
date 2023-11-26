@@ -28,7 +28,13 @@ def classificar_reviews_treinamento(reviews, classificacao, classified_reviews, 
     
     return classified_reviews
         
-def classificar_review_predicao(review, model, feature_size, classificador):
+def classificar_review_predicao(review, model, feature_size, classificador, classified_reviews):
+
+    for classified_review in classified_reviews:
+        if review == classified_review['corpus']:
+            return classified_review['review_type']
+
+    review = word_tokenize(review)
     print('passou aqui')
     word_embedding = []
     for word in review:
@@ -87,7 +93,7 @@ def executar_analise_sentimento(df):
     classifier.fit(X, y)
 
     print(df.head(5))
-    df['sentiment_text'] = df.apply(lambda row: classificar_review_predicao(word_tokenize(row['review_text_normalized']), w2vec_model, feature_size, classifier), axis=1)
+    df['sentiment_text'] = df.apply(lambda row: classificar_review_predicao(row['review_text_normalized'], w2vec_model, feature_size, classifier, classified_reviews), axis=1)
 
     tempo_sentimento = time.time() - inicio
 
