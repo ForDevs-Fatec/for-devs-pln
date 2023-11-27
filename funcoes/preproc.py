@@ -1,6 +1,7 @@
 import re
 from unidecode import unidecode
 from language_tool_python import LanguageTool
+import time
 
 def remover_caracteres_especiais(texto):
 
@@ -15,6 +16,7 @@ def remover_caracteres_especiais(texto):
     return texto_sem_especiais.lower()
 
 def executarPreProcessamento(df_processado, df):
+    inicio = time.time()
     df_processado["review_text_normalized"] = df["review_text"].apply(remover_caracteres_especiais)
-    print (df_processado["review_text_normalized"])
-    return df_processado
+    tempo = time.time() - inicio
+    return df_processado, tempo

@@ -1,6 +1,6 @@
 import pandas as pd
 from funcoes import preproc, class_tema, correcao_ortografica
-from pipeline import pipeline_Stopwords, pipeline_Tokenizacao, pipeline_analiseSentimento
+from pipeline import pipeline_Stopwords, pipeline_Tokenizacao, pipeline_analiseSentimento, pipeline_analiseSentimento_rework
 from sqlalchemy import create_engine
 import time
 
@@ -113,9 +113,10 @@ def executarPipeline(conn, cur, url, client):
         df.to_sql('reviews', engine, if_exists='replace', index=False)
         print('tabela reviews atualizada')
         criarTabelaReviewsProcessados(conn, cur)
-        df_processado = df[['submission_date', 'reviewer_id', 'review_text']].copy()
+        df_processado = df[['submission_date', 'reviewer_id', 'review_text', 'overall_rating']].copy()
         print('tabela clonada')
 
+<<<<<<< HEAD
         df_processado = preproc.executarPreProcessamento(df_processado, df)
         #tempo_prepro = medir(preproc.executarPreProcessamento, df_processado, df)
 
@@ -135,6 +136,26 @@ def executarPipeline(conn, cur, url, client):
         
         df_processado = pipeline_analiseSentimento.executar_analise_sentimento(df_processado)
         #tempo_sentimento = medir(pipeline_analiseSentimento.executar_analise_sentimento, df_processado)
+=======
+        df_processado, tempo_prepro = preproc.executarPreProcessamento(df_processado, df)
+        print(f"Tempo para pré-processamento: {tempo_prepro} segundos")
+
+        df_processado, tempo_stopwork = pipeline_Stopwords.executar_pipeline(df_processado)
+        print(f"Tempo para remoção de stopwords: {tempo_stopwork} segundos")
+
+        df_processado, tempo_correcao = correcao_ortografica.corrigir_textos(df_processado)
+        print(f"Tempo para correção de texto: {tempo_correcao} segundos")
+
+        df_processado, tempo_token = pipeline_Tokenizacao.tokenizar(df_processado)
+        print(f"Tempo para tokenização: {tempo_token} segundos")
+
+        df_processado, tempo_classetema = class_tema.class_tema(df_processado)
+        print(f"Tempo para classificação de temas: {tempo_classetema} segundos")
+        
+        df_processado, tempo_sentimento = pipeline_analiseSentimento_rework.executar_analise_sentimento(df_processado)
+        print(f"Tempo para análise de sentimentos: {tempo_sentimento} segundos")
+
+>>>>>>> 2a9571530aa415bc4f9672d3ac7d6c4298f60366
         df_processado.drop('review_text', axis=1)
         df_processado.to_sql('reviews_processados', engine, if_exists='replace', index=False)
 

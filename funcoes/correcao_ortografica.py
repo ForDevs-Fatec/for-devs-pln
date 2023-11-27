@@ -1,5 +1,6 @@
 from language_tool_python import LanguageTool
 from spellchecker import SpellChecker
+import time
 
 portuguese = SpellChecker(language='pt')
 
@@ -30,7 +31,7 @@ def corrigir_palavra(word):
     return portuguese.correction(word)
 
 def corrigir_textos(df):
+    inicio = time.time()
     df['review_text_normalized'] = df['review_text_normalized'].apply(remover_duplicidade_e_corrigir)
-    print (df['review_text_normalized'])
-    print ('correção')
-    return df
+    tempo = time.time() - inicio
+    return df, tempo
