@@ -16,4 +16,5 @@ def executar_pipeline(df):
     inicio = time.time()
     df['review_text_normalized'] =  df['review_text_normalized'].apply(remover_stopwords)
     tempo = time.time() - inicio
+    print (df['review_text_normalized'])
     return df, tempo

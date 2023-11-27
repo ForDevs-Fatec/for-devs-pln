@@ -125,8 +125,8 @@ def executarPipeline(conn, cur, url, client):
         df_processado, tempo_correcao = correcao_ortografica.corrigir_textos(df_processado)
         print(f"Tempo para correção de texto: {tempo_correcao} segundos")
 
-        df_processado, tempo_token = pipeline_Tokenizacao.tokenizar(df_processado)
-        print(f"Tempo para tokenização: {tempo_token} segundos")
+        #df_processado, tempo_token = pipeline_Tokenizacao.tokenizar(df_processado)
+        #print(f"Tempo para tokenização: {tempo_token} segundos")
 
         df_processado, tempo_classetema = class_tema.class_tema(df_processado)
         print(f"Tempo para classificação de temas: {tempo_classetema} segundos")
@@ -137,7 +137,7 @@ def executarPipeline(conn, cur, url, client):
         df_processado.drop('review_text', axis=1)
         df_processado.to_sql('reviews_processados', engine, if_exists='replace', index=False)
 
-        print("Tempo total da Pipeline: ", tempo_prepro + tempo_stopwork + tempo_correcao + tempo_token + tempo_classetema + tempo_sentimento, " segundos")
+        print("Tempo total da Pipeline: ", tempo_prepro + tempo_stopwork + tempo_correcao + tempo_classetema + tempo_sentimento, " segundos")
 
         criarTabelaTempos(conn, cur)
 
@@ -154,9 +154,9 @@ def executarPipeline(conn, cur, url, client):
                         VALUES ('correcao_ortografica', {tempo_correcao});""")
         print ("Inserido medição tempo correção ortografica: ", tempo_correcao)
 
-        cur.execute( f"""INSERT INTO tempos (funcao, tempo)
-                        VALUES ('tokenização', {tempo_token});""")
-        print ("Inserido medição tempo correção ortografica: ", tempo_token)
+        #cur.execute( f"""INSERT INTO tempos (funcao, tempo)
+        #                VALUES ('tokenização', {tempo_token});""")
+        #print ("Inserido medição tempo correção ortografica: ", tempo_token)
 
         cur.execute( f"""INSERT INTO tempos (funcao, tempo)
                         VALUES ('class_tema', {tempo_classetema});""")

@@ -1,10 +1,11 @@
 from language_tool_python import LanguageTool
 from spellchecker import SpellChecker
+from gensim.models import word2vec
 import time
 
 portuguese = SpellChecker(language='pt')
 
-def remover_duplicidade_e_corrigir(texto):
+def remover_duplicidade(texto):
 
     texto_sem_duplicidade = texto[0]
     quantidade_duplicados_consoantes = 0
@@ -32,6 +33,7 @@ def corrigir_palavra(word):
 
 def corrigir_textos(df):
     inicio = time.time()
-    df['review_text_normalized'] = df['review_text_normalized'].apply(remover_duplicidade_e_corrigir)
+    df['review_text_normalized'] = df['review_text_normalized'].apply(remover_duplicidade)
     tempo = time.time() - inicio
+    print (df['review_text_normalized'])
     return df, tempo
