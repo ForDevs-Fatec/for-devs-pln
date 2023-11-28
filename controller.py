@@ -153,8 +153,8 @@ def getCategoriaTemas():
 def getDistribuicaoSentimentosFaixaEtariaTema():
     try:
         return pesquisa.getDistribuicaoSentimentosFaixaEtariaTema(conn=conn, cur=cur)
-    except:
-        return {"erro": "erro ao buscar dados"}
+    except Exception as e:
+        return {"erro": f"erro ao buscar dados {e}"}
     
 @app.get("/getMedicoes")
 def getMedicoes():
