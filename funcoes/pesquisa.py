@@ -5,6 +5,7 @@ from pipeline.pipeline_analiseSentimento_rework import analisar
 from funcoes.correcao_ortografica import remover_duplicidade
 from funcoes.preproc import remover_caracteres_especiais
 from funcoes.class_tema import classifica
+from nltk.tokenize import word_tokenize
 
 def pesquisarReviews(param: str, conn, cur):
 
@@ -31,8 +32,18 @@ def pesquisarReviews(param: str, conn, cur):
         # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
         sentimento_param = analisar(param_tokens)
         print(sentimento_param)
+        
+        tokenized_param = word_tokenize(param_tokens)
+        i = 1
+        busca = ""
+        for word in tokenized_param:
+            busca += f"r.review_text LIKE '%{word}%' "
+            if i < len(tokenized_param):
+                busca += "OR "
+            i+= 1
+        print(busca)
 
-        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = '{classificacao}'"
+        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE {busca} AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = '{classificacao}'"
 
         cur.execute(query)
         result = cur.fetchall()
