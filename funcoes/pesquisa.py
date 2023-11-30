@@ -1,10 +1,10 @@
 from datetime import date # quando se quer apenas 1 dos submódulos
 from pipeline.pipeline_Tokenizacao import tokenize_unique
 from pipeline.pipeline_Stopwords import remover_stopwords
-from pipeline.pipeline_analiseSentimento import analisar
+from pipeline.pipeline_analiseSentimento_rework import analisar
 from funcoes.correcao_ortografica import remover_duplicidade
 from funcoes.preproc import remover_caracteres_especiais
-from funcoes.class_tema import class_tema_new
+from funcoes.class_tema import classifica
 
 def pesquisarReviews(param: str, conn, cur):
 
@@ -25,14 +25,14 @@ def pesquisarReviews(param: str, conn, cur):
         param_tokens = tokenize_unique(param_sem_stopwords)
         print(param_tokens)
 
-        classificacao = class_tema_new(param_tokens)
+        classificacao = classifica(param, param_tokens)
         print(classificacao)
 
         # Aplica a análise de sentimentos aos parâmetros de pesquisa - tarefa 1.12
         sentimento_param = analisar(param_tokens)
         print(sentimento_param)
 
-        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_result = '{sentimento_param}' AND rp.classificacao_tema = {classificacao}"
+        query = f"SELECT * FROM reviews r JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id WHERE r.review_text LIKE '%{param}%' AND rp.sentiment_text = '{sentimento_param}' AND rp.classificacao_tema = '{classificacao}'"
 
         cur.execute(query)
         result = cur.fetchall()
