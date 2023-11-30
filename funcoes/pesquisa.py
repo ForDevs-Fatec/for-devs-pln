@@ -265,3 +265,91 @@ def getMedicoes(conn, cur):
         resultado.append(newRow)
 
     return resultado
+
+def getMelhoresProdutos(conn, cur):
+    query = '''SELECT r.product_name, COUNT(rp.sentiment_text) as positive_count
+            FROM reviews r
+            JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id
+            WHERE rp.sentiment_text = 'positive'
+            GROUP BY r.product_name
+            ORDER BY positive_count DESC
+            LIMIT 5;'''
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultado = []
+
+    for row in result:
+        newRow = {
+            'product_name': row[0],
+            'quantidade_reviews_positivas': row[1]
+        }
+        resultado.append(newRow)
+
+    return resultado
+
+def getPioresProdutos(conn, cur):
+    query = '''SELECT r.product_name, COUNT(rp.sentiment_text) as negative_count
+            FROM reviews r
+            JOIN reviews_processados rp ON r.submission_date = rp.submission_date AND r.reviewer_id = rp.reviewer_id
+            WHERE rp.sentiment_text = 'negative'
+            GROUP BY r.product_name
+            ORDER BY negative_count DESC
+            LIMIT 5;'''
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultado = []
+
+    for row in result:
+        newRow = {
+            'product_name': row[0],
+            'quantidade_reviews_negativas': row[1]
+        }
+        resultado.append(newRow)
+
+    return resultado
+
+def getMelhoresTemas(conn, cur):
+    query = '''SELECT classificacao_tema, COUNT(sentiment_text) as positive_count
+            FROM reviews_processados
+            WHERE sentiment_text = 'positive'
+            GROUP BY classificacao_tema
+            ORDER BY positive_count DESC
+            LIMIT 5;'''
+    
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultado = []
+
+    for row in result:
+        newRow = {
+            'classificacao_tema': row[0],
+            'quantidade_reviews_positivas': row[1]
+        }
+        resultado.append(newRow)
+    
+    return resultado
+
+def getPioresTemas(conn, cur):
+    query = '''SELECT classificacao_tema, COUNT(sentiment_text) as negative_count
+            FROM reviews_processados
+            WHERE sentiment_text = 'negative'
+            GROUP BY classificacao_tema
+            ORDER BY negative_count DESC
+            LIMIT 5;'''
+    
+    cur.execute(query)
+    result = cur.fetchall()
+
+    resultado = []
+
+    for row in result:
+        newRow = {
+            'classificacao_tema': row[0],
+            'quantidade_reviews_negativas': row[1]
+        }
+        resultado.append(newRow)
+    
+    return resultado

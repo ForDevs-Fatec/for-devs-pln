@@ -162,3 +162,31 @@ def getMedicoes():
         return pesquisa.getMedicoes(conn=conn, cur=cur)
     except:
         return {"erro": "erro ao buscar dados"}
+
+@app.get("/get-melhores-produtos")
+def getMelhoresProdutos():
+    try:
+        return pesquisa.getMelhoresProdutos(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+
+@app.get("/get-piores-produtos")
+def getPioresProdutos():
+    try:
+        return pesquisa.getPioresProdutos(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+
+@app.get("/get-melhores-atributos")
+def getMelhoresAtributos():
+    try:
+        return pesquisa.getMelhoresTemas(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
+
+@app.get("/get-piores-atributos")
+def getPioresAtributos():
+    try:
+        return pesquisa.getPioresTemas(conn=conn, cur=cur)
+    except:
+        return {"erro": "erro ao buscar dados"}
